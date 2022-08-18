@@ -1,0 +1,96 @@
+{{ if .Values.feedScraper.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jasper.fullname" . }}-feed-scraper
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.feedScraper.autoscaling.enabled }}
+  replicas: {{ .Values.feedScraper.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "jasper.feedScraper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.feedScraper.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jasper.feedScraper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jasper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-feed-scraper
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.feedScraper.profiles }}
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://{{ .Values.postgresql.fullnameOverride }}:5432/{{ .Values.postgresql.auth.database }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.fullnameOverride }}
+                  key: postgres-password
+            {{- if .Values.config.clientSecret }}
+            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jasper-jwt-config
+                  key: clientSecret
+            {{- end }}
+            {{- if .Values.config.jwksUri }}
+            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_JWKS_URI
+              value: {{ .Values.config.jwksUri }}
+            {{- end }}
+            - name: APPLICATION_SCRAPE_DELAY_MIN
+              value: {{ .Values.feedScraper.scrapeDelayMin | quote }}
+            - name: APPLICATION_SCRAPE_INTERVAL_MIN
+              value: {{ .Values.feedScraper.scrapeIntervalMin | quote }}
+            - name: APPLICATION_DEFAULT_ROLE
+              value: {{ .Values.config.defaultRole }}
+            - name: APPLICATION_USERNAME_CLAIM
+              value: {{ .Values.config.usernameClaim }}
+          livenessProbe:
+            initialDelaySeconds: 35
+            httpGet:
+              path: /management/health/liveness
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 35
+            httpGet:
+              path: /management/health/readiness
+              port: http
+          resources:
+            {{- toYaml .Values.feedScraper.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jasper.fullname" . }}
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "jasper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jasper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jasper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.config.profiles }}
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://{{ .Values.postgresql.fullnameOverride }}:5432/{{ .Values.postgresql.auth.database }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.fullnameOverride }}
+                  key: postgres-password
+            {{- if .Values.config.clientId }}
+            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            {{- end }}
+            {{- if .Values.config.clientSecret }}
+            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jasper-jwt-config
+                  key: clientSecret
+            {{- end }}
+            {{- if .Values.config.jwksUri }}
+            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_JWKS_URI
+              value: {{ .Values.config.jwksUri }}
+            {{- end }}
+            {{- if .Values.config.tokenEndpoint }}
+            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_TOKEN_ENDPOINT
+              value: {{ .Values.config.tokenEndpoint }}
+            {{- end }}
+            {{- if .Values.config.scimEndpoint }}
+            - name: APPLICATION_SCIM_ENDPOINT
+              value: {{ .Values.config.scimEndpoint }}
+            {{- end }}
+            - name: APPLICATION_SCRAPE_DELAY_MIN
+              value: {{ .Values.config.scrapeDelayMin | quote }}
+            - name: APPLICATION_SCRAPE_INTERVAL_MIN
+              value: {{ .Values.config.scrapeIntervalMin | quote }}
+            - name: APPLICATION_DEFAULT_ROLE
+              value: {{ .Values.config.defaultRole }}
+            - name: APPLICATION_USERNAME_CLAIM
+              value: {{ .Values.config.usernameClaim }}
+          volumeMounts:
+            - name: storage
+              mountPath: "/var/lib/jasper"
+          {{- if .Values.persistence.subPath }}
+              subPath: {{ .Values.persistence.subPath }}
+          {{- end }}
+          livenessProbe:
+            initialDelaySeconds: 20
+            httpGet:
+              path: /management/health/liveness
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 20
+            httpGet:
+              path: /management/health/readiness
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+    {{- if .Values.persistence.enabled }}
+        - name: storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "jasper.fullname" .) }}
+    {{- else }}
+        - name: storage
+      {{- if .Values.persistence.inMemory.enabled }}
+          emptyDir:
+            medium: Memory
+        {{- if .Values.persistence.inMemory.sizeLimit }}
+            sizeLimit: {{ .Values.persistence.inMemory.sizeLimit }}
+        {{- end -}}
+      {{- else }}
+          emptyDir: {}
+      {{- end -}}
+    {{- end -}}
