@@ -26,6 +26,9 @@ postgresql:
   fullnameOverride: jasper-db
   auth:
     database: jasper
+  primary:
+    extendedConfiguration: |-
+      default_text_search_config = 'pg_catalog.english'
 
 imagePullSecrets: []
 nameOverride: ""
