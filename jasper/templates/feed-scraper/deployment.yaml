@@ -51,23 +51,23 @@ spec:
                   name: {{ .Values.postgresql.fullnameOverride }}
                   key: postgres-password
             {{- if .Values.config.clientSecret }}
-            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
+            - name: JASPER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
               valueFrom:
                 secretKeyRef:
                   name: jasper-jwt-config
                   key: clientSecret
             {{- end }}
             {{- if .Values.config.jwksUri }}
-            - name: APPLICATION_SECURITY_AUTHENTICATION_JWT_JWKS_URI
+            - name: JASPER_SECURITY_AUTHENTICATION_JWT_JWKS_URI
               value: {{ .Values.config.jwksUri }}
             {{- end }}
-            - name: APPLICATION_SCRAPE_DELAY_MIN
+            - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.feedScraper.scrapeDelayMin | quote }}
-            - name: APPLICATION_SCRAPE_INTERVAL_MIN
+            - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.feedScraper.scrapeIntervalMin | quote }}
-            - name: APPLICATION_DEFAULT_ROLE
+            - name: JASPER_DEFAULT_ROLE
               value: {{ .Values.config.defaultRole }}
-            - name: APPLICATION_USERNAME_CLAIM
+            - name: JASPER_USERNAME_CLAIM
               value: {{ .Values.config.usernameClaim }}
           livenessProbe:
             initialDelaySeconds: 35

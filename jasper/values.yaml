@@ -115,6 +115,8 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+heap: 512m
+
 autoscaling:
   enabled: false
   minReplicas: 1
