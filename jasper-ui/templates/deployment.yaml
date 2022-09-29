@@ -52,8 +52,8 @@ spec:
               value: {{ .Values.config.jasperLogin }}
             - name: JASPER_SIGNUP
               value: {{ .Values.config.jasperSignup }}
-            - name: JASPER_PROFILES
-              value: {{ .Values.config.scim }}
+            - name: JASPER_SCIM
+              value: {{ .Values.config.scim | quote }}
           livenessProbe:
             httpGet:
               path: /
