@@ -60,6 +60,10 @@ spec:
                   name: jasper-jwt-config
                   key: clientSecret
             {{- end }}
+            {{- if .Values.config.jwtAlg }}
+            - name: JASPER_SECURITY_AUTHENTICATION_JWT_ALG
+              value: {{ .Values.config.jwtAlg }}
+            {{- end }}
             {{- if .Values.config.jwksUri }}
             - name: JASPER_SECURITY_AUTHENTICATION_JWT_JWKS_URI
               value: {{ .Values.config.jwksUri }}

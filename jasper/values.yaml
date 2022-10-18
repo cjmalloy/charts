@@ -14,6 +14,7 @@ config:
   profiles: prod
   clientId: ""
   clientSecret: ""
+  jwtAlg: ""
   jwksUri: ""
   tokenEndpoint: ""
   scimEndpoint: ""
