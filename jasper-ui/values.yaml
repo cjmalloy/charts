@@ -25,9 +25,10 @@ config:
   scim: false
   codeFlow: false
   implicitFlow: false
-  issuer: ''
-  clientId: ''
-  scope: 'openid email'
+  issuer: ""
+  clientId: ""
+  scope: "openid email"
+  cspDefaultSrc: ""
 
 
 serviceAccount:

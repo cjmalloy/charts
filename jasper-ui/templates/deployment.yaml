@@ -64,6 +64,8 @@ spec:
               value: {{ .Values.config.clientId }}
             - name: JASPER_SCOPE
               value: {{ .Values.config.scope }}
+            - name: CSP_DEFAULT_SRC
+              value: {{ .Values.config.cspDefaultSrc }}
           livenessProbe:
             httpGet:
               path: /
