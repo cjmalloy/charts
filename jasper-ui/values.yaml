@@ -22,7 +22,13 @@ config:
   jasperLogin: ""
   jasperSignup: ""
   assetsConfig: ""
-  scim: true
+  scim: false
+  codeFlow: false
+  implicitFlow: false
+  issuer: ''
+  clientId: ''
+  scope: 'openid email'
+
 
 serviceAccount:
   # Specifies whether a service account should be created

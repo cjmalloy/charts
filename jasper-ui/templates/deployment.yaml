@@ -54,6 +54,16 @@ spec:
               value: {{ .Values.config.jasperSignup }}
             - name: JASPER_SCIM
               value: {{ .Values.config.scim | quote }}
+            - name: JASPER_CODE_FLOW
+              value: {{ .Values.config.codeFlow | quote }}
+            - name: JASPER_IMPLICIT_FLOW
+              value: {{ .Values.config.implicitFlow | quote }}
+            - name: JASPER_ISSUER
+              value: {{ .Values.config.issuer }}
+            - name: JASPER_CLIENT_ID
+              value: {{ .Values.config.clientId }}
+            - name: JASPER_SCOPE
+              value: {{ .Values.config.scope }}
           livenessProbe:
             httpGet:
               path: /
