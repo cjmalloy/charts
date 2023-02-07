@@ -66,21 +66,35 @@ spec:
             - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.feedScraper.scrapeIntervalMin | quote }}
             - name: JASPER_DEFAULT_ROLE
-              value: {{ .Values.config.defaultRole }}
+              value: {{ .Values.feedScraper.defaultRole }}
             - name: JASPER_USERNAME_CLAIM
               value: {{ .Values.config.usernameClaim }}
+            - name: JASPER_HEAP
+              value: {{ .Values.heap }}
           livenessProbe:
-            initialDelaySeconds: 35
+            initialDelaySeconds: 90
             httpGet:
               path: /management/health/liveness
               port: http
           readinessProbe:
-            initialDelaySeconds: 35
+            initialDelaySeconds: 90
             httpGet:
               path: /management/health/readiness
               port: http
           resources:
             {{- toYaml .Values.feedScraper.resources | nindent 12 }}
+        {{- if .Values.feedScraper.smtp }}
+        - name: smtp-hook
+          image: "{{ .Values.smtp.repository }}:{{ .Values.smtp.tag }}"
+          imagePullPolicy: {{ .Values.smtp.pullPolicy }}
+          ports:
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+          env:
+            - name: WEBHOOK
+              value: http://localhost:8081/api/v1/webhook/smtp
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

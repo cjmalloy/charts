@@ -1,0 +1,17 @@
+{{ if .Values.feedScraper.smtp }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jasper.fullname" . }}-feed-scraper-smtp
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 25
+      targetPort: smtp
+      protocol: TCP
+      name: smtp
+  selector:
+    {{- include "jasper.feedScraper.selectorLabels" . | nindent 4 }}
+{{ end }}

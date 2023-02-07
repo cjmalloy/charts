@@ -22,6 +22,12 @@ config:
   scrapeDelayMin: 5
   defaultRole: ROLE_USER
   usernameClaim: sub
+  smtp: false
+
+smtp:
+  repository: ghcr.io/cjmalloy/smtp-hook
+  pullPolicy: IfNotPresent
+  tag: v1.0.0
 
 postgresql:
   fullnameOverride: jasper-db
@@ -137,6 +143,9 @@ feedScraper:
   profiles: prod,feed-burst
   scrapeIntervalMin: 1
   scrapeDelayMin: 0
+  defaultRole: ROLE_VIEWER
+  smtp: false
+
   podAnnotations: {}
   resources: {}
   autoscaling:
