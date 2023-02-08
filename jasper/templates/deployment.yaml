@@ -98,7 +98,7 @@ spec:
               path: /management/health/liveness
               port: http
           readinessProbe:
-            initialDelaySeconds: 90
+            initialDelaySeconds: 15
             httpGet:
               path: /management/health/readiness
               port: http
