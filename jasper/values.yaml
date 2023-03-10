@@ -22,6 +22,7 @@ config:
   scrapeDelayMin: 5
   defaultRole: ROLE_USER
   usernameClaim: sub
+  multiTenant: false
   smtp: false
 
 smtp:
