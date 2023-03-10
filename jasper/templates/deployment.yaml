@@ -84,6 +84,8 @@ spec:
               value: {{ .Values.config.defaultRole }}
             - name: JASPER_USERNAME_CLAIM
               value: {{ .Values.config.usernameClaim }}
+            - name: JASPER_MULTI_TENANT
+              value: {{ .Values.config.multiTenant | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:
