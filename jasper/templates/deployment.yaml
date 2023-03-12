@@ -86,6 +86,8 @@ spec:
               value: {{ .Values.config.usernameClaim }}
             - name: JASPER_MULTI_TENANT
               value: {{ .Values.config.multiTenant | quote }}
+            - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
+              value: {{ .Values.config.allowLocalOriginHeader | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:

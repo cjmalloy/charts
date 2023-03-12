@@ -23,6 +23,7 @@ config:
   defaultRole: ROLE_USER
   usernameClaim: sub
   multiTenant: false
+  allowLocalOriginHeader: false
   smtp: false
 
 smtp:
@@ -110,6 +111,13 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+  tenants: []
+  #  - origin: @example
+  #    annotations: {}
+  #    host: chart-example.local
+  #    path: /
+  #    pathType: ImplementationSpecific
+  #    tlsSecretName: chart-example-tls
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
