@@ -78,6 +78,8 @@ spec:
             {{- end }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.config.scrapeDelayMin | quote }}
+            - name: JASPER_SCRAPE_ORIGINS
+              value: {{ join "," .Values.config.scrapeOrigins | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.config.scrapeIntervalMin | quote }}
             - name: JASPER_DEFAULT_ROLE

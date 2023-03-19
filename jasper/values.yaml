@@ -20,6 +20,7 @@ config:
   scimEndpoint: ""
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
+  scrapeOrigins: ['']
   defaultRole: ROLE_USER
   usernameClaim: sub
   multiTenant: false
