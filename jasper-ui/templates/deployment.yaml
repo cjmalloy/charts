@@ -56,6 +56,16 @@ spec:
               value: {{ .Values.config.scim | quote }}
             - name: JASPER_MULTI_TENANT
               value: {{ .Values.config.multiTenant | quote }}
+            - name: JASPER_ALLOWED_SCHEMES
+              value: {{ join "," .Values.config.allowedSchemes | quote }}
+            - name: JASPER_MAX_PLUGINS
+              value: {{ .Values.config.maxPlugins }}
+            - name: JASPER_MAX_TEMPLATES
+              value: {{ .Values.config.maxTemplates }}
+            - name: JASPER_MAX_ORIGINS
+              value: {{ .Values.config.maxOrigins }}
+            - name: JASPER_FETCH_BATCH
+              value: {{ .Values.config.fetchBatch }}
             - name: JASPER_CODE_FLOW
               value: {{ .Values.config.codeFlow | quote }}
             - name: JASPER_IMPLICIT_FLOW
