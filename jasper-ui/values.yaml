@@ -23,13 +23,13 @@ config:
   jasperSignup: ""
   assetsConfig: ""
   scim: false
+  multiTenant: false
   codeFlow: false
   implicitFlow: false
   issuer: ""
   clientId: ""
   scope: "openid email"
   cspDefaultSrc: ""
-
 
 serviceAccount:
   # Specifies whether a service account should be created
