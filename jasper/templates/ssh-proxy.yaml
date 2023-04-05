@@ -1,0 +1,17 @@
+{{ if .Values.sshProxy.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jasper.fullname" . }}-ssh-proxy
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 22
+      targetPort: ssh
+      protocol: TCP
+      name: ssh
+  selector:
+    {{- include "jasper.selectorLabels" . | nindent 4 }}
+{{ end }}

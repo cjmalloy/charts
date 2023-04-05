@@ -37,6 +37,14 @@ smtp:
   tag: v1.0.0
   origin: ""
 
+sshProxy:
+  enabled: false
+  repository: ghcr.io/cjmalloy/jasper-ssh
+  pullPolicy: IfNotPresent
+  tag: v1.0.3
+  authorizedKeys: ""
+  authorizedKeysConfigMap: ""
+
 postgresql:
   fullnameOverride: jasper-db
   auth:

@@ -146,10 +146,14 @@ spec:
             - name: LOCAL_ORIGIN
               value: "@farm"
             - name: AUTHORIZED_KEYS
+              {{- if .Values.sshProxy.authorizedKeysConfigMap }}
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
                   key: authorized_keys
+              {{- else }}
+              value: {{ .Values.sshProxy.authorizedKeys }}
+              {{- end }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
