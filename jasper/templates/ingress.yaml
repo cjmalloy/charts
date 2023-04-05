@@ -18,8 +18,16 @@ metadata:
   name: {{ $fullName }}
   labels:
     {{- include "jasper.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
   annotations:
+    nginx.ingress.kubernetes.io/server-snippet: |
+      more_set_input_headers "Local-Origin: {{ .Values.ingress.localOrigin }}";
+      more_set_input_headers "User-Tag: {{ .Values.ingress.userTag }}";
+      more_set_input_headers "User-Role: {{ .Values.ingress.userRole }}";
+      more_set_input_headers "Read-Access: {{ .Values.ingress.readAccess }}";
+      more_set_input_headers "Write-Access: {{ .Values.ingress.writeAccess }}";
+      more_set_input_headers "Tag-Read-Access: {{ .Values.ingress.tagReadAccess }}";
+      more_set_input_headers "Tag-Write-Access: {{ .Values.ingress.tagWriteAccess }}";
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:

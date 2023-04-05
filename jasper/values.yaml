@@ -21,10 +21,14 @@ config:
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
   scrapeOrigins: ['']
-  defaultRole: ROLE_USER
+  minRole: ROLE_ANONYMOUS
+  defaultRole: ROLE_ANONYMOUS
   usernameClaim: sub
   multiTenant: false
+  allowUserTagHeader: false
+  allowUserRoleHeader: false
   allowLocalOriginHeader: false
+  allowAuthHeaders: false
   smtp: false
 
 smtp:
@@ -100,6 +104,13 @@ persistence:
 ingress:
   enabled: false
   className: ""
+  localOrigin: ""
+  userTag: ""
+  userRole: ""
+  readAccess: ""
+  writeAccess: ""
+  tagReadAccess: ""
+  tagWriteAccess: ""
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
@@ -114,6 +125,12 @@ ingress:
   #      - chart-example.local
   tenants: []
   #  - origin: @example
+  #    userTag: ""
+  #    userRole: ""
+  #    readAccess: ""
+  #    writeAccess: ""
+  #    tagReadAccess: ""
+  #    tagWriteAccess: ""
   #    annotations: {}
   #    host: chart-example.local
   #    path: /

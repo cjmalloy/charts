@@ -9,7 +9,12 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/server-snippet: |
       more_set_input_headers "Local-Origin: {{ .origin }}";
-      add_header Local-Origin {{ .origin | quote }};
+      more_set_input_headers "User-Tag: {{ .userTag }}";
+      more_set_input_headers "User-Role: {{ .userRole }}";
+      more_set_input_headers "Read-Access: {{ .readAccess }}";
+      more_set_input_headers "Write-Access: {{ .writeAccess }}";
+      more_set_input_headers "Tag-Read-Access: {{ .tagReadAccess }}";
+      more_set_input_headers "Tag-Write-Access: {{ .tagWriteAccess }}";
     {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
