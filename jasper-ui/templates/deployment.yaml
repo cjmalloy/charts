@@ -43,15 +43,15 @@ spec:
             - name: JASPER_VERSION
               value: {{ .Values.image.tag | default .Chart.AppVersion }}
             - name: JASPER_TITLE
-              value: {{ .Values.config.title }}
+              value: {{ .Values.config.title | quote }}
             - name: JASPER_API
               value: {{ .Values.config.jasperApi }}
             - name: JASPER_LOGOUT
-              value: {{ .Values.config.jasperLogout }}
+              value: {{ .Values.config.jasperLogout | quote }}
             - name: JASPER_LOGIN
-              value: {{ .Values.config.jasperLogin }}
+              value: {{ .Values.config.jasperLogin | quote }}
             - name: JASPER_SIGNUP
-              value: {{ .Values.config.jasperSignup }}
+              value: {{ .Values.config.jasperSignup | quote }}
             - name: JASPER_SCIM
               value: {{ .Values.config.scim | quote }}
             - name: JASPER_MULTI_TENANT
@@ -59,25 +59,25 @@ spec:
             - name: JASPER_ALLOWED_SCHEMES
               value: {{ join "," .Values.config.allowedSchemes | quote }}
             - name: JASPER_MAX_PLUGINS
-              value: {{ .Values.config.maxPlugins }}
+              value: {{ .Values.config.maxPlugins | quote }}
             - name: JASPER_MAX_TEMPLATES
-              value: {{ .Values.config.maxTemplates }}
+              value: {{ .Values.config.maxTemplates | quote }}
             - name: JASPER_MAX_ORIGINS
-              value: {{ .Values.config.maxOrigins }}
+              value: {{ .Values.config.maxOrigins | quote }}
             - name: JASPER_FETCH_BATCH
-              value: {{ .Values.config.fetchBatch }}
+              value: {{ .Values.config.fetchBatch | quote }}
             - name: JASPER_CODE_FLOW
               value: {{ .Values.config.codeFlow | quote }}
             - name: JASPER_IMPLICIT_FLOW
               value: {{ .Values.config.implicitFlow | quote }}
             - name: JASPER_ISSUER
-              value: {{ .Values.config.issuer }}
+              value: {{ .Values.config.issuer | quote }}
             - name: JASPER_CLIENT_ID
-              value: {{ .Values.config.clientId }}
+              value: {{ .Values.config.clientId | quote }}
             - name: JASPER_SCOPE
-              value: {{ .Values.config.scope }}
+              value: {{ .Values.config.scope | quote }}
             - name: CSP_DEFAULT_SRC
-              value: {{ .Values.config.cspDefaultSrc }}
+              value: {{ .Values.config.cspDefaultSrc | quote }}
           livenessProbe:
             httpGet:
               path: /
