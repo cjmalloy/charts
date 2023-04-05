@@ -47,11 +47,11 @@ spec:
             - name: JASPER_API
               value: {{ .Values.config.jasperApi }}
             - name: JASPER_LOGOUT
-              value: {{ .Values.config.jasperLogout }}
+              value: {{ .Values.config.jasperLogout | quote }}
             - name: JASPER_LOGIN
-              value: {{ .Values.config.jasperLogin }}
+              value: {{ .Values.config.jasperLogin | quote }}
             - name: JASPER_SIGNUP
-              value: {{ .Values.config.jasperSignup }}
+              value: {{ .Values.config.jasperSignup | quote }}
             - name: JASPER_SCIM
               value: {{ .Values.config.scim | quote }}
             - name: JASPER_MULTI_TENANT
