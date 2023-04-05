@@ -140,16 +140,28 @@ spec:
               protocol: TCP
           env:
             - name: USER_TAG
-              value: "_user/ssh"
+              value: {{ .Values.sshProxy.userTag | quote }}
             - name: USER_ROLE
-              value: "ROLE_ADMIN"
+              value: {{ .Values.sshProxy.userRole | quote }}
             - name: LOCAL_ORIGIN
-              value: "@farm"
+              value: {{ .Values.sshProxy.localOrigin | quote }}
+            - name: READ_ACCESS
+              value: {{ .Values.sshProxy.readAccess | quote }}
+            - name: WRITE_ACCESS
+              value: {{ .Values.sshProxy.writeAccess | quote }}
+            - name: TAG_READ_ACCESS
+              value: {{ .Values.sshProxy.tagReadAccess | quote }}
+            - name: TAG_WRITE_ACCESS
+              value: {{ .Values.sshProxy.tagWriteAccess | quote }}
             - name: AUTHORIZED_KEYS
+              {{- if .Values.sshProxy.authorizedKeysConfigMap }}
               valueFrom:
                 configMapKeyRef:
                   name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
                   key: authorized_keys
+              {{- else }}
+              value: {{ .Values.sshProxy.authorizedKeys | quote }}
+              {{- end }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
