@@ -29,12 +29,13 @@ config:
   allowUserRoleHeader: false
   allowLocalOriginHeader: false
   allowAuthHeaders: false
-  smtp: false
 
 smtp:
+  enabled: false
   repository: ghcr.io/cjmalloy/smtp-hook
   pullPolicy: IfNotPresent
   tag: v1.0.0
+  origin: ""
 
 postgresql:
   fullnameOverride: jasper-db
@@ -163,21 +164,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-feedScraper:
-  enabled: false
-  replicaCount: 1
-  profiles: prod,feed-burst
-  scrapeIntervalMin: 1
-  scrapeDelayMin: 0
-  defaultRole: ROLE_VIEWER
-  smtp: false
-
-  podAnnotations: {}
-  resources: {}
-  autoscaling:
-    enabled: false
-    minReplicas: 1
-    maxReplicas: 100
-    targetCPUUtilizationPercentage: 80
-    # targetMemoryUtilizationPercentage: 80

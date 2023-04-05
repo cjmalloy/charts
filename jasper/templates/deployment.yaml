@@ -118,7 +118,7 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        {{- if .Values.config.smtp }}
+        {{- if .Values.smtp.enabled }}
         - name: smtp-hook
           image: "{{ .Values.smtp.repository }}:{{ .Values.smtp.tag }}"
           imagePullPolicy: {{ .Values.smtp.pullPolicy }}
@@ -128,7 +128,28 @@ spec:
               protocol: TCP
           env:
             - name: WEBHOOK
-              value: http://localhost:8081/api/v1/webhook/smtp
+              value: http://localhost:8081/api/v1/webhook/smtp?origin={{ .Values.smtp.origin }}
+        {{- end }}
+        {{- if .Values.sshProxy.enabled }}
+        - name: ssh-proxy
+          image: "{{ .Values.sshProxy.repository }}:{{ .Values.sshProxy.tag }}"
+          imagePullPolicy: {{ .Values.sshProxy.pullPolicy }}
+          ports:
+            - name: ssh
+              containerPort: 22
+              protocol: TCP
+          env:
+            - name: USER_TAG
+              value: "_user/ssh"
+            - name: USER_ROLE
+              value: "ROLE_ADMIN"
+            - name: LOCAL_ORIGIN
+              value: "@farm"
+            - name: AUTHORIZED_KEYS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
+                  key: authorized_keys
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
