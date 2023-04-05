@@ -57,7 +57,7 @@ spec:
             - name: JASPER_MULTI_TENANT
               value: {{ .Values.config.multiTenant | quote }}
             - name: JASPER_ALLOWED_SCHEMES
-              value: {{ join "," .Values.config.allowedSchemes | quote }}
+              value: {{ .Values.config.allowedSchemes | toJson | quote }}
             - name: JASPER_MAX_PLUGINS
               value: {{ .Values.config.maxPlugins | quote }}
             - name: JASPER_MAX_TEMPLATES
