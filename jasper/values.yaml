@@ -42,7 +42,6 @@ sshProxy:
   repository: ghcr.io/cjmalloy/jasper-ssh
   pullPolicy: IfNotPresent
   tag: v1.0.3
-  upstream: ""
   localOrigin: ""
   userTag: "_user/ssh"
   userRole: ""
