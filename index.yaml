@@ -255,6 +255,16 @@ entries:
     version: 1.0.1
   jasper-ui:
   - apiVersion: v2
+    appVersion: v1.2.304
+    created: "2023-04-07T23:18:21.574472029Z"
+    description: A Helm chart for Kubernetes
+    digest: 58c7202b7d85bbb43562dab046fbbe51474bc38a44ec752779c706674e911094
+    name: jasper-ui
+    type: application
+    urls:
+    - https://github.com/cjmalloy/charts/releases/download/jasper-ui-1.0.17/jasper-ui-1.0.17.tgz
+    version: 1.0.17
+  - apiVersion: v2
     appVersion: v1.2.79
     created: "2023-04-05T17:58:25.228243378Z"
     description: A Helm chart for Kubernetes
@@ -404,4 +414,4 @@ entries:
     urls:
     - https://github.com/cjmalloy/charts/releases/download/jasper-ui-1.0.1/jasper-ui-1.0.1.tgz
     version: 1.0.1
-generated: "2023-04-07T23:03:51.898410708Z"
+generated: "2023-04-07T23:18:21.574730833Z"
