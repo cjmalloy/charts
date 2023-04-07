@@ -34,8 +34,9 @@ smtp:
   enabled: false
   repository: ghcr.io/cjmalloy/smtp-hook
   pullPolicy: IfNotPresent
-  tag: v1.0.0
+  tag: v1.0.2
   origin: ""
+  headers: ""
 
 sshProxy:
   enabled: false
