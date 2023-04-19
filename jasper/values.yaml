@@ -21,6 +21,7 @@ config:
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
   scrapeOrigins: ['']
+  oembedOrigins: ['']
   minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
   usernameClaim: sub

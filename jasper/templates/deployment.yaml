@@ -82,6 +82,8 @@ spec:
               value: {{ join "," .Values.config.scrapeOrigins | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.config.scrapeIntervalMin | quote }}
+            - name: JASPER_OEMBED_ORIGINS
+              value: {{ join "," .Values.config.oembedOrigins | quote }}
             - name: JASPER_MIN_ROLE
               value: {{ .Values.config.minRole }}
             - name: JASPER_DEFAULT_ROLE
