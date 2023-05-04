@@ -49,32 +49,51 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.postgresql.fullnameOverride }}
                   key: postgres-password
-            {{- if .Values.config.clientId }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_CLIENT_ID
-              value: {{ .Values.config.clientId }}
+            - name: JASPER_MIN_ROLE
+              value: {{ .Values.config.minRole }}
+            - name: JASPER_MULTI_TENANT
+              value: {{ .Values.config.multiTenant | quote }}
+            - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
+              value: {{ .Values.config.allowLocalOriginHeader | quote }}
+            {{- $tenant := default "default" .origin | replace "@" "" -}}
+            {{- range .Values.config.tenants -}}
+            {{- if .clientId }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_CLIENT_ID
+              value: {{ .clientId }}
             {{- end }}
-            {{- if .Values.config.clientSecret }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
+            {{- if .clientSecret }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_BASE64_SECRET
               valueFrom:
                 secretKeyRef:
                   name: jasper-jwt-config
                   key: clientSecret
             {{- end }}
-            {{- if .Values.config.jwtAlg }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_ALG
-              value: {{ .Values.config.jwtAlg }}
+            {{- if .jwtAlg }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_ALG
+              value: {{ .jwtAlg }}
             {{- end }}
-            {{- if .Values.config.jwksUri }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_JWKS_URI
-              value: {{ .Values.config.jwksUri }}
+            {{- if .jwksUri }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_JWKS_URI
+              value: {{ .jwksUri }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_DEFAULT_ROLE
+              value: {{ .defaultRole }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_USERNAME_CLAIM
+              value: {{ .usernameClaim }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USER_TAG_HEADER
+              value: {{ .allowUserTagHeader | quote }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USER_ROLE_HEADER
+              value: {{ .allowUserRoleHeader | quote }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_AUTH_HEADERS
+              value: {{ .allowAuthHeaders | quote }}
             {{- end }}
-            {{- if .Values.config.tokenEndpoint }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_TOKEN_ENDPOINT
+            {{- if .tokenEndpoint }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_TOKEN_ENDPOINT
               value: {{ .Values.config.tokenEndpoint }}
             {{- end }}
-            {{- if .Values.config.scimEndpoint }}
-            - name: JASPER_SCIM_ENDPOINT
-              value: {{ .Values.config.scimEndpoint }}
+            {{- if .scimEndpoint }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_SCIM_ENDPOINT
+              value: {{ .scimEndpoint }}
+            {{- end }}
             {{- end }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.config.scrapeDelayMin | quote }}
@@ -84,22 +103,6 @@ spec:
               value: {{ .Values.config.scrapeIntervalMin | quote }}
             - name: JASPER_OEMBED_ORIGINS
               value: {{ join "," .Values.config.oembedOrigins | quote }}
-            - name: JASPER_MIN_ROLE
-              value: {{ .Values.config.minRole }}
-            - name: JASPER_DEFAULT_ROLE
-              value: {{ .Values.config.defaultRole }}
-            - name: JASPER_USERNAME_CLAIM
-              value: {{ .Values.config.usernameClaim }}
-            - name: JASPER_MULTI_TENANT
-              value: {{ .Values.config.multiTenant | quote }}
-            - name: JASPER_ALLOW_USER_TAG_HEADER
-              value: {{ .Values.config.allowUserTagHeader | quote }}
-            - name: JASPER_ALLOW_USER_ROLE_HEADER
-              value: {{ .Values.config.allowUserRoleHeader | quote }}
-            - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
-              value: {{ .Values.config.allowLocalOriginHeader | quote }}
-            - name: JASPER_ALLOW_AUTH_HEADERS
-              value: {{ .Values.config.allowAuthHeaders | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:
