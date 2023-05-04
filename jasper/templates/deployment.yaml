@@ -50,26 +50,26 @@ spec:
                   name: {{ .Values.postgresql.fullnameOverride }}
                   key: postgres-password
             {{- if .Values.config.clientId }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_CLIENT_ID
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_AUTHENTICATION_JWT_CLIENT_ID
               value: {{ .Values.config.clientId }}
             {{- end }}
             {{- if .Values.config.clientSecret }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_AUTHENTICATION_JWT_BASE64_SECRET
               valueFrom:
                 secretKeyRef:
                   name: jasper-jwt-config
                   key: clientSecret
             {{- end }}
             {{- if .Values.config.jwtAlg }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_ALG
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_AUTHENTICATION_JWT_ALG
               value: {{ .Values.config.jwtAlg }}
             {{- end }}
             {{- if .Values.config.jwksUri }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_JWKS_URI
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_AUTHENTICATION_JWT_JWKS_URI
               value: {{ .Values.config.jwksUri }}
             {{- end }}
             {{- if .Values.config.tokenEndpoint }}
-            - name: JASPER_SECURITY_AUTHENTICATION_JWT_TOKEN_ENDPOINT
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_AUTHENTICATION_JWT_TOKEN_ENDPOINT
               value: {{ .Values.config.tokenEndpoint }}
             {{- end }}
             {{- if .Values.config.scimEndpoint }}
@@ -86,19 +86,19 @@ spec:
               value: {{ join "," .Values.config.oembedOrigins | quote }}
             - name: JASPER_MIN_ROLE
               value: {{ .Values.config.minRole }}
-            - name: JASPER_DEFAULT_ROLE
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_DEFAULT_ROLE
               value: {{ .Values.config.defaultRole }}
-            - name: JASPER_USERNAME_CLAIM
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_USERNAME_CLAIM
               value: {{ .Values.config.usernameClaim }}
             - name: JASPER_MULTI_TENANT
               value: {{ .Values.config.multiTenant | quote }}
-            - name: JASPER_ALLOW_USER_TAG_HEADER
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_ALLOW_USER_TAG_HEADER
               value: {{ .Values.config.allowUserTagHeader | quote }}
-            - name: JASPER_ALLOW_USER_ROLE_HEADER
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_ALLOW_USER_ROLE_HEADER
               value: {{ .Values.config.allowUserRoleHeader | quote }}
-            - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_ALLOW_LOCAL_ORIGIN_HEADER
               value: {{ .Values.config.allowLocalOriginHeader | quote }}
-            - name: JASPER_ALLOW_AUTH_HEADERS
+            - name: JASPER_SECURITY_CLIENTS_DEFAULT_ALLOW_AUTH_HEADERS
               value: {{ .Values.config.allowAuthHeaders | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
