@@ -1,69 +1,44 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "jasper.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
-{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
-  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
-  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
-  {{- end }}
-{{- end }}
-{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- range .Values.ingress.tenants -}}
+{{- $tenant := default "default" (.origin | replace "@" "") -}}
 apiVersion: networking.k8s.io/v1
-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
-apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ $fullName }}-{{ $tenant }}
   labels:
-    {{- include "jasper.labels" . | nindent 4 }}
+    {{- include "jasper.labels" $ | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/server-snippet: |
-      more_set_input_headers "Local-Origin: {{ .Values.ingress.localOrigin }}";
-      more_set_input_headers "User-Tag: {{ .Values.ingress.userTag }}";
-      more_set_input_headers "User-Role: {{ .Values.ingress.userRole }}";
-      more_set_input_headers "Read-Access: {{ .Values.ingress.readAccess }}";
-      more_set_input_headers "Write-Access: {{ .Values.ingress.writeAccess }}";
-      more_set_input_headers "Tag-Read-Access: {{ .Values.ingress.tagReadAccess }}";
-      more_set_input_headers "Tag-Write-Access: {{ .Values.ingress.tagWriteAccess }}";
-  {{- with .Values.ingress.annotations }}
+      more_set_input_headers "Local-Origin: {{ .origin }}";
+      more_set_input_headers "User-Tag: {{ .userTag }}";
+      more_set_input_headers "User-Role: {{ .userRole }}";
+      more_set_input_headers "Read-Access: {{ .readAccess }}";
+      more_set_input_headers "Write-Access: {{ .writeAccess }}";
+      more_set_input_headers "Tag-Read-Access: {{ .tagReadAccess }}";
+      more_set_input_headers "Tag-Write-Access: {{ .tagWriteAccess }}";
+    {{- with .annotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.ingress.className }}
-  {{- end }}
-  {{- if .Values.ingress.tls }}
-  tls:
-    {{- range .Values.ingress.tls }}
-    - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
     {{- end }}
+spec:
+  ingressClassName: {{ $.Values.ingress.className }}
+  {{- if .tlsSecretName }}
+  tls:
+    - hosts:
+        - {{ .host | quote }}
+      secretName: {{ .tlsSecretName }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }}
           - path: {{ .path }}
-            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
             pathType: {{ .pathType }}
-            {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ $fullName }}
                 port:
-                  number: {{ $svcPort }}
-              {{- else }}
-              serviceName: {{ $fullName }}
-              servicePort: {{ $svcPort }}
-              {{- end }}
-          {{- end }}
-    {{- end }}
+                  number: {{ $.Values.service.port }}
+---
+{{- end }}
 {{- end }}
