@@ -32,6 +32,10 @@ config:
       allowUserTagHeader: false
       allowUserRoleHeader: false
       allowAuthHeaders: false
+  mail:
+    host: smtp-relay.gmail.com
+    port: 587
+    localhost: jasper.local
 
 smtp:
   enabled: false
