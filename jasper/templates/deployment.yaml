@@ -99,6 +99,14 @@ spec:
               value: {{ .scimEndpoint }}
             {{- end }}
             {{- end }}
+            - name: JASPER_MAIL_HOST
+              value: {{ .Values.config.mail.host | quote }}
+            - name: JASPER_MAIL_PORT
+              value: {{ .Values.config.mail.port | quote }}
+            - name: JASPER_MAIL_PROPERTIES_MAIL_SMTP_LOCALHOST
+              value: {{ .Values.config.mail.localhost | quote }}
+            - name: JASPER_MAIL_LOCALHOST
+              value: {{ .Values.config.mail.localhost | quote }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.config.scrapeDelayMin | quote }}
             - name: JASPER_SCRAPE_ORIGINS
