@@ -15,9 +15,15 @@ config:
   minRole: ROLE_ANONYMOUS
   allowLocalOriginHeader: false
   scimEndpoint: ""
+  asyncIntervalMin: 1
+  asyncDelayMin: 2
+  asyncOrigins: ['']
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
   scrapeOrigins: ['']
+  replicateIntervalMin: 1
+  replicateDelayMin: 5
+  replicateOrigins: ['']
   oembedOrigins: ['']
   tenants:
     - origin: ""

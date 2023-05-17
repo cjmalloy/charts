@@ -107,12 +107,24 @@ spec:
               value: {{ .Values.config.mail.localhost | quote }}
             - name: JASPER_MAIL_LOCALHOST
               value: {{ .Values.config.mail.localhost | quote }}
+            - name: JASPER_ASYNC_DELAY_MIN
+              value: {{ .Values.config.asyncDelayMin | quote }}
+            - name: JASPER_ASYNC_INTERVAL_MIN
+              value: {{ .Values.config.asyncIntervalMin | quote }}
+            - name: JASPER_ASYNC_ORIGINS
+              value: {{ join "," .Values.config.asyncOrigins | quote }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.config.scrapeDelayMin | quote }}
-            - name: JASPER_SCRAPE_ORIGINS
-              value: {{ join "," .Values.config.scrapeOrigins | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.config.scrapeIntervalMin | quote }}
+            - name: JASPER_SCRAPE_ORIGINS
+              value: {{ join "," .Values.config.scrapeOrigins | quote }}
+            - name: JASPER_REPLICATE_DELAY_MIN
+              value: {{ .Values.config.replicateDelayMin | quote }}
+            - name: JASPER_REPLICATE_INTERVAL_MIN
+              value: {{ .Values.config.replicateIntervalMin | quote }}
+            - name: JASPER_REPLICATE_ORIGINS
+              value: {{ join "," .Values.config.replicateOrigins | quote }}
             - name: JASPER_OEMBED_ORIGINS
               value: {{ join "," .Values.config.oembedOrigins | quote }}
             - name: JASPER_HEAP
