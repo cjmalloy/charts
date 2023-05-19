@@ -78,6 +78,8 @@ spec:
               value: {{ .Values.config.scope | quote }}
             - name: CSP_DEFAULT_SRC
               value: {{ .Values.config.cspDefaultSrc | quote }}
+            - name: CSP_SCRIPT_SRC
+              value: {{ .Values.config.cspScriptSrc | quote }}
           livenessProbe:
             httpGet:
               path: /

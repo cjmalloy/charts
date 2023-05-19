@@ -41,6 +41,7 @@ config:
   clientId: ""
   scope: "openid email"
   cspDefaultSrc: ""
+  cspScriptSrc: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
