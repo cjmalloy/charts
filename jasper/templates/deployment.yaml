@@ -92,7 +92,7 @@ spec:
             {{- end }}
             {{- if .tokenEndpoint }}
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_TOKEN_ENDPOINT
-              value: {{ .Values.config.tokenEndpoint }}
+              value: {{ .tokenEndpoint }}
             {{- end }}
             {{- if .scimEndpoint }}
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_SCIM_ENDPOINT
