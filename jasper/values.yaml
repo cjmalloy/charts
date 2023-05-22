@@ -13,6 +13,7 @@ image:
 config:
   profiles: prod
   minRole: ROLE_ANONYMOUS
+  multiTenant: false
   allowLocalOriginHeader: false
   scimEndpoint: ""
   asyncIntervalMin: 1
@@ -33,7 +34,6 @@ config:
       tokenEndpoint: ""
       defaultRole: ROLE_ANONYMOUS
       usernameClaim: sub
-      multiTenant: false
       allowUserTagHeader: false
       allowUserRoleHeader: false
       allowAuthHeaders: false
