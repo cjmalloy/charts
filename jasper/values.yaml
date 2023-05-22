@@ -24,7 +24,6 @@ config:
   replicateIntervalMin: 1
   replicateDelayMin: 5
   replicateOrigins: ['']
-  oembedOrigins: ['']
   tenants:
     - origin: ""
       clientId: ""

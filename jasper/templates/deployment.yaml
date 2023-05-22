@@ -125,8 +125,6 @@ spec:
               value: {{ .Values.config.replicateIntervalMin | quote }}
             - name: JASPER_REPLICATE_ORIGINS
               value: {{ join "," .Values.config.replicateOrigins | quote }}
-            - name: JASPER_OEMBED_ORIGINS
-              value: {{ join "," .Values.config.oembedOrigins | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:
