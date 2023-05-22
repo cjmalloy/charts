@@ -17,13 +17,13 @@ config:
   scimEndpoint: ""
   asyncIntervalMin: 1
   asyncDelayMin: 2
-  asyncOrigins: ['']
+#  asyncOrigins: ['']
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
-  scrapeOrigins: ['']
+#  scrapeOrigins: ['']
   replicateIntervalMin: 1
   replicateDelayMin: 5
-  replicateOrigins: ['']
+#  replicateOrigins: ['']
   tenants:
     - origin: ""
       clientId: ""

@@ -111,20 +111,26 @@ spec:
               value: {{ .Values.config.asyncDelayMin | quote }}
             - name: JASPER_ASYNC_INTERVAL_MIN
               value: {{ .Values.config.asyncIntervalMin | quote }}
+            {{- if .Values.config.asyncOrigins }}
             - name: JASPER_ASYNC_ORIGINS
               value: {{ join "," .Values.config.asyncOrigins | quote }}
+            {{- end }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.config.scrapeDelayMin | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.config.scrapeIntervalMin | quote }}
+            {{- if .Values.config.scrapeOrigins }}
             - name: JASPER_SCRAPE_ORIGINS
               value: {{ join "," .Values.config.scrapeOrigins | quote }}
+            {{- end }}
             - name: JASPER_REPLICATE_DELAY_MIN
               value: {{ .Values.config.replicateDelayMin | quote }}
             - name: JASPER_REPLICATE_INTERVAL_MIN
               value: {{ .Values.config.replicateIntervalMin | quote }}
+            {{- if .Values.config.replicateOrigins }}
             - name: JASPER_REPLICATE_ORIGINS
               value: {{ join "," .Values.config.replicateOrigins | quote }}
+            {{- end }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:
