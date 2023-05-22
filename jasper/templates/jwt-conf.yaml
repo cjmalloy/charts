@@ -1,9 +1,12 @@
-{{- if .Values.config.clientSecret }}
 apiVersion: v1
 kind: Secret
 metadata:
   name: jasper-jwt-config
 type: Opaque
 data:
-  clientSecret: {{ .Values.config.clientSecret | b64enc | b64enc }}
+{{- range .Values.config.tenants }}
+{{- $tenant := default "default" .origin | replace "@" "" | upper }}
+{{- if .clientSecret }}
+  {{ $tenant }}: {{ .clientSecret | b64enc | b64enc }}
+{{- end }}
 {{- end }}

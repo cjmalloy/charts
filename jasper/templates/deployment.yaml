@@ -64,7 +64,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: jasper-jwt-config
-                  key: clientSecret
+                  key: {{ $tenant }}
             {{- end }}
             {{- if .jwtAlg }}
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_ALG
