@@ -15,7 +15,6 @@ config:
   minRole: ROLE_ANONYMOUS
   multiTenant: false
   allowLocalOriginHeader: false
-  scimEndpoint: ""
   asyncIntervalMin: 1
   asyncDelayMin: 2
 #  asyncOrigins: ['']
@@ -32,6 +31,7 @@ config:
       jwtAlg: ""
       jwksUri: ""
       tokenEndpoint: ""
+      scimEndpoint: ""
       defaultRole: ROLE_ANONYMOUS
       usernameClaim: sub
       allowUserTagHeader: false
