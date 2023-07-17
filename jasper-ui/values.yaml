@@ -40,6 +40,7 @@ config:
   issuer: ""
   clientId: ""
   scope: "openid email"
+  preAuthScrape: true
   cspDefaultSrc: ""
   cspScriptSrc: ""
 

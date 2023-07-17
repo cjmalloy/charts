@@ -76,6 +76,8 @@ spec:
               value: {{ .Values.config.clientId | quote }}
             - name: JASPER_SCOPE
               value: {{ .Values.config.scope | quote }}
+            - name: PRE_AUTH_SCRAPE
+              value: {{ .Values.config.preAuthScrape | quote }}
             - name: CSP_DEFAULT_SRC
               value: {{ .Values.config.cspDefaultSrc | quote }}
             - name: CSP_SCRIPT_SRC
