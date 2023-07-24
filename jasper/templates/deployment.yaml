@@ -107,10 +107,10 @@ spec:
               value: {{ .Values.config.mail.localhost | quote }}
             - name: JASPER_EMAIL_HOST
               value: {{ .Values.config.mail.localhost | quote }}
-            - name: JASPER_ASYNC_DELAY_MIN
-              value: {{ .Values.config.asyncDelayMin | quote }}
-            - name: JASPER_ASYNC_INTERVAL_MIN
-              value: {{ .Values.config.asyncIntervalMin | quote }}
+            - name: JASPER_ASYNC_DELAY_SEC
+              value: {{ .Values.config.asyncDelaySec | quote }}
+            - name: JASPER_ASYNC_INTERVAL_SEC
+              value: {{ .Values.config.asyncIntervalSec | quote }}
             {{- if .Values.config.asyncOrigins }}
             - name: JASPER_ASYNC_ORIGINS
               value: {{ join "," .Values.config.asyncOrigins | quote }}
