@@ -15,8 +15,8 @@ config:
   minRole: ROLE_ANONYMOUS
   multiTenant: false
   allowLocalOriginHeader: false
-  asyncIntervalMin: 1
-  asyncDelayMin: 2
+  asyncIntervalSec: 60
+  asyncDelaySec: 120
 #  asyncOrigins: ['']
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
