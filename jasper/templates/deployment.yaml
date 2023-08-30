@@ -90,6 +90,10 @@ spec:
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_AUTH_HEADERS
               value: {{ .allowAuthHeaders | quote }}
             {{- end }}
+            {{- if .tenantAccess }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_TENANT_ACCESS
+              value: {{ join "," .tenantAccess | quote }}
+            {{- end }}
             {{- if .tokenEndpoint }}
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_TOKEN_ENDPOINT
               value: {{ .tokenEndpoint }}

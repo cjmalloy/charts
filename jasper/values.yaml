@@ -37,6 +37,7 @@ config:
       allowUserTagHeader: false
       allowUserRoleHeader: false
       allowAuthHeaders: false
+#      tenantAccess: ['']
   mail:
     host: smtp-relay.gmail.com
     port: 587
