@@ -39,6 +39,15 @@ spec:
                 name: {{ $fullName }}
                 port:
                   number: {{ $.Values.service.port }}
+          {{- if .websockets }}
+          - path: {{ .websocketPath }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
 ---
 {{- end }}
 {{- end }}

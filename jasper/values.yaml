@@ -144,7 +144,9 @@ ingress:
       tagWriteAccess: ""
       annotations: {}
       host: chart-example.local
-      path: /
+      path: /api
+      websockets: true
+      websocketPath: /websocket
       pathType: ImplementationSpecific
       tlsSecretName: chart-example-tls
 
