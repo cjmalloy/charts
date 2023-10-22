@@ -43,6 +43,8 @@ config:
   preAuthScrape: true
   cspDefaultSrc: ""
   cspScriptSrc: ""
+  cspStyleSrc: ""
+  cspConnectSrc: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
