@@ -2,10 +2,11 @@
 {{- $fullName := include "jasper.fullname" . -}}
 {{- range .Values.ingress.tenants -}}
 {{- $tenant := default "default" (.origin | replace "@" "") -}}
+{{- if .publicApi }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}-{{ $tenant }}
+  name: {{ $fullName }}-{{ $tenant }}-pub
   labels:
     {{- include "jasper.labels" $ | nindent 4 }}
   annotations:
@@ -17,7 +18,7 @@ metadata:
       more_set_input_headers "Write-Access: {{ .writeAccess }}";
       more_set_input_headers "Tag-Read-Access: {{ .tagReadAccess }}";
       more_set_input_headers "Tag-Write-Access: {{ .tagWriteAccess }}";
-    {{- with .annotations }}
+    {{- with .publicApiAnnotations }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
@@ -32,22 +33,14 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          - path: {{ .path }}
+          - path: {{ .publicApiPath }}
             pathType: {{ .pathType }}
             backend:
               service:
                 name: {{ $fullName }}
                 port:
                   number: {{ $.Values.service.port }}
-          {{- if .websockets }}
-          - path: {{ .websocketPath }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ $fullName }}
-                port:
-                  number: {{ $.Values.service.port }}
-          {{- end }}
 ---
+{{- end }}
 {{- end }}
 {{- end }}

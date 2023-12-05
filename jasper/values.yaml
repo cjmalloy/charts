@@ -147,6 +147,9 @@ ingress:
       path: /api
       websockets: true
       websocketPath: /websocket
+      publicApi: true
+      publicApiPath: /pub
+      publicApiAnnotations: {}
       pathType: ImplementationSpecific
       tlsSecretName: chart-example-tls
 
