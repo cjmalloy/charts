@@ -55,10 +55,10 @@ sshProxy:
   enabled: false
   repository: ghcr.io/cjmalloy/jasper-ssh
   pullPolicy: IfNotPresent
-  tag: v1.0.3
+  tag: v1.1.0
   localOrigin: ""
-  userTag: "_user/ssh"
-  userRole: ""
+  userTag: ""
+  userRole: "ROLE_VIEWER"
   readAccess: ""
   writeAccess: ""
   tagReadAccess: ""

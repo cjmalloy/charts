@@ -205,6 +205,11 @@ spec:
               {{- else }}
               value: {{ .Values.sshProxy.authorizedKeys | quote }}
               {{- end }}
+          livenessProbe:
+            initialDelaySeconds: 5
+            exec:
+              command:
+              - /healthcheck.sh
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
