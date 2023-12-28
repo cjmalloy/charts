@@ -196,15 +196,15 @@ spec:
               value: {{ .Values.sshProxy.tagReadAccess | quote }}
             - name: TAG_WRITE_ACCESS
               value: {{ .Values.sshProxy.tagWriteAccess | quote }}
+              {{- if .Values.sshProxy.authorizedKeys }}
             - name: AUTHORIZED_KEYS
-              {{- if .Values.sshProxy.authorizedKeysConfigMap }}
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
-                  key: authorized_keys
-              {{- else }}
               value: {{ .Values.sshProxy.authorizedKeys | quote }}
               {{- end }}
+          {{- if .Values.sshProxy.authorizedKeysConfigMap }}
+          volumeMounts:
+            - mountPath: authorized_keys
+              name: authorized_keys
+          {{- end }}
           livenessProbe:
             initialDelaySeconds: 5
             exec:
@@ -224,6 +224,11 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        {{- if .Values.sshProxy.authorizedKeysConfigMap }}
+        - name: authorized_keys
+          configMap:
+            name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
+        {{- end }}
     {{- if .Values.persistence.enabled }}
         - name: storage
           persistentVolumeClaim:
