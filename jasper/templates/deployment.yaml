@@ -202,8 +202,8 @@ spec:
               {{- end }}
           {{- if .Values.sshProxy.authorizedKeysConfigMap }}
           volumeMounts:
-            - mountPath: /authorized_keys
-              name: authorized-keys
+            - mountPath: /config
+              name: config
           {{- end }}
           livenessProbe:
             initialDelaySeconds: 5
@@ -225,7 +225,7 @@ spec:
       {{- end }}
       volumes:
         {{- if .Values.sshProxy.authorizedKeysConfigMap }}
-        - name: authorized-keys
+        - name: config
           configMap:
             name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
         {{- end }}
