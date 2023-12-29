@@ -173,44 +173,6 @@ spec:
               value: {{ .Values.smtp.headers | quote }}
             {{- end }}
         {{- end }}
-        {{- if .Values.sshProxy.enabled }}
-        - name: ssh-proxy
-          image: "{{ .Values.sshProxy.repository }}:{{ .Values.sshProxy.tag }}"
-          imagePullPolicy: {{ .Values.sshProxy.pullPolicy }}
-          ports:
-            - name: ssh
-              containerPort: 22
-              protocol: TCP
-          env:
-            - name: USER_TAG
-              value: {{ .Values.sshProxy.userTag | quote }}
-            - name: USER_ROLE
-              value: {{ .Values.sshProxy.userRole | quote }}
-            - name: LOCAL_ORIGIN
-              value: {{ .Values.sshProxy.localOrigin | quote }}
-            - name: READ_ACCESS
-              value: {{ .Values.sshProxy.readAccess | quote }}
-            - name: WRITE_ACCESS
-              value: {{ .Values.sshProxy.writeAccess | quote }}
-            - name: TAG_READ_ACCESS
-              value: {{ .Values.sshProxy.tagReadAccess | quote }}
-            - name: TAG_WRITE_ACCESS
-              value: {{ .Values.sshProxy.tagWriteAccess | quote }}
-              {{- if .Values.sshProxy.authorizedKeys }}
-            - name: AUTHORIZED_KEYS
-              value: {{ .Values.sshProxy.authorizedKeys | quote }}
-              {{- end }}
-          {{- if .Values.sshProxy.authorizedKeysConfigMap }}
-          volumeMounts:
-            - mountPath: /config
-              name: config
-          {{- end }}
-          livenessProbe:
-            initialDelaySeconds: 5
-            exec:
-              command:
-              - /healthcheck.sh
-        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -224,11 +186,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if .Values.sshProxy.authorizedKeysConfigMap }}
-        - name: config
-          configMap:
-            name: {{ .Values.sshProxy.authorizedKeysConfigMap }}
-        {{- end }}
     {{- if .Values.persistence.enabled }}
         - name: storage
           persistentVolumeClaim:

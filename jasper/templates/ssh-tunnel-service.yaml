@@ -1,14 +1,14 @@
-{{ if .Values.sshProxy.enabled }}
+{{ if .Values.sshTunnel.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "jasper.fullname" . }}-ssh-proxy
+  name: {{ include "jasper.fullname" . }}-ssh-tunnel
   labels:
     {{- include "jasper.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.sshTunnel.service.type }}
   ports:
-    - port: 22
+    - port: {{ .Values.sshTunnel.service.port }}
       targetPort: ssh
       protocol: TCP
       name: ssh
