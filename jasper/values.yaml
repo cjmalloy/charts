@@ -168,7 +168,7 @@ affinity: {}
 sshTunnel:
   enabled: false
 
-  replicaCount: 1
+  replicaCount: 2
 
   image:
     repository: ghcr.io/cjmalloy/jasper-ssh
