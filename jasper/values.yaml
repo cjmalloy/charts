@@ -173,7 +173,7 @@ sshTunnel:
   image:
     repository: ghcr.io/cjmalloy/jasper-ssh
     pullPolicy: IfNotPresent
-    tag: v1.1.3
+    tag: v1.1.5
 
   localOrigin: ""
   userTag: ""
@@ -184,6 +184,8 @@ sshTunnel:
   tagWriteAccess: ""
   authorizedKeys: ""
   authorizedKeysConfigMap: ""
+
+  terminationGracePeriodSeconds: 60
 
   imagePullSecrets: [ ]
 
