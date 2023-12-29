@@ -1,0 +1,28 @@
+{{- if .Values.sshTunnel.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "jasper.fullname" . }}
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "jasper.fullname" . }}
+  minReplicas: {{ .Values.sshTunnel.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.sshTunnel.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.sshTunnel.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.sshTunnel.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.sshTunnel.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.sshTunnel.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

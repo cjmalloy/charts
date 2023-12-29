@@ -1,0 +1,88 @@
+{{- if .Values.sshTunnel.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jasper.fullname" . }}-ssh-tunnel
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.sshTunnel.autoscaling.enabled }}
+  replicas: {{ .Values.sshTunnel.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "jasper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.sshTunnel.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jasper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.sshTunnel.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jasper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.sshTunnel.podSecurityContext | nindent 8 }}
+      containers:
+        - name: ssh-proxy
+          image: "{{ .Values.sshTunnel.image.repository }}:{{ .Values.sshTunnel.image.tag }}"
+          imagePullPolicy: {{ .Values.sshTunnel.image.pullPolicy }}
+          ports:
+            - name: ssh
+              containerPort: 22
+              protocol: TCP
+          env:
+            - name: UPSTREAM
+              value: http://{{ include "jasper.fullname" . }}/
+            - name: USER_TAG
+              value: {{ .Values.sshTunnel.userTag | quote }}
+            - name: USER_ROLE
+              value: {{ .Values.sshTunnel.userRole | quote }}
+            - name: LOCAL_ORIGIN
+              value: {{ .Values.sshTunnel.localOrigin | quote }}
+            - name: READ_ACCESS
+              value: {{ .Values.sshTunnel.readAccess | quote }}
+            - name: WRITE_ACCESS
+              value: {{ .Values.sshTunnel.writeAccess | quote }}
+            - name: TAG_READ_ACCESS
+              value: {{ .Values.sshTunnel.tagReadAccess | quote }}
+            - name: TAG_WRITE_ACCESS
+              value: {{ .Values.sshTunnel.tagWriteAccess | quote }}
+              {{- if .Values.sshTunnel.authorizedKeys }}
+            - name: AUTHORIZED_KEYS
+              value: {{ .Values.sshTunnel.authorizedKeys | quote }}
+              {{- end }}
+          {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
+          volumeMounts:
+            - mountPath: /config
+              name: config
+          {{- end }}
+          livenessProbe:
+            initialDelaySeconds: 5
+            exec:
+              command:
+              - /healthcheck.sh
+      {{- with .Values.sshTunnel.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sshTunnel.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sshTunnel.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.sshTunnel.authorizedKeysConfigMap }}
+      {{- end }}
+{{- end }}
