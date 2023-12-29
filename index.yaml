@@ -3,6 +3,20 @@ entries:
   jasper:
   - apiVersion: v2
     appVersion: v1.2.320
+    created: "2023-12-29T23:09:11.277433474Z"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.9.13
+    description: A Helm chart for Kubernetes
+    digest: b55743befb950e0dac69f7fa436a3e2567db440b4ced53e637ce1ae915e9525a
+    name: jasper
+    type: application
+    urls:
+    - https://github.com/cjmalloy/charts/releases/download/jasper-1.0.58/jasper-1.0.58.tgz
+    version: 1.0.58
+  - apiVersion: v2
+    appVersion: v1.2.320
     created: "2023-12-29T05:48:38.178696057Z"
     dependencies:
     - name: postgresql
@@ -1000,4 +1014,4 @@ entries:
     urls:
     - https://github.com/cjmalloy/charts/releases/download/jasper-ui-1.0.1/jasper-ui-1.0.1.tgz
     version: 1.0.1
-generated: "2023-12-29T05:48:38.179084236Z"
+generated: "2023-12-29T23:09:11.277851643Z"
