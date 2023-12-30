@@ -24,6 +24,11 @@ config:
   replicateIntervalMin: 1
   replicateDelayMin: 5
 #  replicateOrigins: ['']
+  sshIntervalMin: 1
+  sshDelayMin: 5
+  sshConfigNamespace: "default"
+  sshConfigMapName: "ssh-authorized-keys"
+#  sshOrigins: ['']
   tenants:
     - origin: ""
       clientId: ""

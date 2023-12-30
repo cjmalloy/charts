@@ -137,6 +137,18 @@ spec:
             - name: JASPER_REPLICATE_ORIGINS
               value: {{ join "," .Values.config.replicateOrigins | quote }}
             {{- end }}
+            - name: JASPER_SSH_DELAY_MIN
+              value: {{ .Values.config.sshDelayMin | quote }}
+            - name: JASPER_SSH_INTERVAL_MIN
+              value: {{ .Values.config.sshIntervalMin | quote }}
+            - name: JASPER_SSH_CONFIG_NAMESPACE
+              value: {{ .Values.config.sshConfigNamespace | quote }}
+            - name: JASPER_SSH_CONFIG_MAP_NAME
+              value: {{ .Values.config.sshConfigMapName | quote }}
+            {{- if .Values.config.sshOrigins }}
+            - name: JASPER_SSH_ORIGINS
+              value: {{ join "," .Values.config.sshOrigins | quote }}
+            {{- end }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:
