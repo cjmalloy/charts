@@ -13,7 +13,6 @@ image:
 config:
   profiles: prod
   minRole: ROLE_ANONYMOUS
-  multiTenant: false
   allowLocalOriginHeader: false
   asyncIntervalSec: 60
   asyncDelaySec: 120

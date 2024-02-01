@@ -23,7 +23,6 @@ config:
   jasperSignup: ""
   assetsConfig: ""
   scim: false
-  multiTenant: false
   allowedSchemes:
     - "http:"
     - "https:"

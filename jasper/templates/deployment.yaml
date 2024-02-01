@@ -53,8 +53,6 @@ spec:
                   key: postgres-password
             - name: JASPER_MIN_ROLE
               value: {{ .Values.config.minRole }}
-            - name: JASPER_MULTI_TENANT
-              value: {{ .Values.config.multiTenant | quote }}
             - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
               value: {{ .Values.config.allowLocalOriginHeader | quote }}
             {{- range .Values.config.tenants }}

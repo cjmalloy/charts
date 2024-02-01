@@ -54,8 +54,6 @@ spec:
               value: {{ .Values.config.jasperSignup | quote }}
             - name: JASPER_SCIM
               value: {{ .Values.config.scim | quote }}
-            - name: JASPER_MULTI_TENANT
-              value: {{ .Values.config.multiTenant | quote }}
             - name: JASPER_ALLOWED_SCHEMES
               value: {{ .Values.config.allowedSchemes | toJson | quote }}
             - name: JASPER_MAX_PLUGINS
