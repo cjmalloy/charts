@@ -157,6 +157,7 @@ spec:
           {{- end }}
           livenessProbe:
             initialDelaySeconds: 90
+            failureThreshold: 10
             httpGet:
               path: /management/health/liveness
               port: http
