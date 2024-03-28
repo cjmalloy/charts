@@ -16,18 +16,14 @@ config:
   allowLocalOriginHeader: false
   asyncIntervalSec: 60
   asyncDelaySec: 120
-#  asyncOrigins: ['']
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
-#  scrapeOrigins: ['']
   replicateIntervalMin: 1
   replicateDelayMin: 5
-#  replicateOrigins: ['']
   sshIntervalMin: 1
   sshDelayMin: 5
   sshConfigNamespace: "default"
   sshConfigMapName: "ssh-authorized-keys"
-#  sshOrigins: ['']
   tenants:
     - origin: ""
       clientId: ""

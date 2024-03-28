@@ -113,32 +113,18 @@ spec:
               value: {{ .Values.config.mail.port | quote }}
             - name: JASPER_MAIL_PROPERTIES_MAIL_SMTP_LOCALHOST
               value: {{ .Values.config.mail.localhost | quote }}
-            - name: JASPER_EMAIL_HOST
-              value: {{ .Values.config.mail.localhost | quote }}
             - name: JASPER_ASYNC_DELAY_SEC
               value: {{ .Values.config.asyncDelaySec | quote }}
             - name: JASPER_ASYNC_INTERVAL_SEC
               value: {{ .Values.config.asyncIntervalSec | quote }}
-            {{- if .Values.config.asyncOrigins }}
-            - name: JASPER_ASYNC_ORIGINS
-              value: {{ join "," .Values.config.asyncOrigins | quote }}
-            {{- end }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.config.scrapeDelayMin | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
               value: {{ .Values.config.scrapeIntervalMin | quote }}
-            {{- if .Values.config.scrapeOrigins }}
-            - name: JASPER_SCRAPE_ORIGINS
-              value: {{ join "," .Values.config.scrapeOrigins | quote }}
-            {{- end }}
             - name: JASPER_REPLICATE_DELAY_MIN
               value: {{ .Values.config.replicateDelayMin | quote }}
             - name: JASPER_REPLICATE_INTERVAL_MIN
               value: {{ .Values.config.replicateIntervalMin | quote }}
-            {{- if .Values.config.replicateOrigins }}
-            - name: JASPER_REPLICATE_ORIGINS
-              value: {{ join "," .Values.config.replicateOrigins | quote }}
-            {{- end }}
             - name: JASPER_SSH_DELAY_MIN
               value: {{ .Values.config.sshDelayMin | quote }}
             - name: JASPER_SSH_INTERVAL_MIN
@@ -147,10 +133,6 @@ spec:
               value: {{ .Values.config.sshConfigNamespace | quote }}
             - name: JASPER_SSH_CONFIG_MAP_NAME
               value: {{ .Values.config.sshConfigMapName | quote }}
-            {{- if .Values.config.sshOrigins }}
-            - name: JASPER_SSH_ORIGINS
-              value: {{ join "," .Values.config.sshOrigins | quote }}
-            {{- end }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
           volumeMounts:
