@@ -78,6 +78,10 @@ spec:
               value: {{ .defaultRole }}
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_USERNAME_CLAIM
               value: {{ .usernameClaim }}
+            {{- if .allowUsernameClaimOrigin }}
+            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USERNAME_CLAIM_ORIGIN
+              value: {{ .allowUsernameClaimOrigin | quote }}
+            {{- end }}
             {{- if .allowUserTagHeader }}
             - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USER_TAG_HEADER
               value: {{ .allowUserTagHeader | quote }}

@@ -38,6 +38,7 @@ config:
       scimEndpoint: ""
       defaultRole: ROLE_ANONYMOUS
       usernameClaim: sub
+      allowUsernameClaimOrigin: false
       allowUserTagHeader: false
       allowUserRoleHeader: false
       allowAuthHeaders: false
