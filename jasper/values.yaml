@@ -30,6 +30,7 @@ config:
       clientId: ''
       clientSecret: ''
       jwksUri: ''
+      usernameClaim: ''
       tokenEndpoint: ''
       scimEndpoint: ''
   mail:
