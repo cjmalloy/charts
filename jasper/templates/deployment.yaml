@@ -86,6 +86,8 @@ spec:
             {{- end }}
             - name: JASPER_OVERRIDE_SECURITY_JWKS_URI
               value: {{ .Values.config.override.security.jwksUri }}
+            - name: JASPER_OVERRIDE_SECURITY_USERNAME_CLAIM
+              value: {{ .Values.config.override.security.usernameClaim }}
             - name: JASPER_OVERRIDE_SECURITY_TOKEN_ENDPOINT
               value: {{ .Values.config.override.security.tokenEndpoint }}
             - name: JASPER_OVERRIDE_SECURITY_SCIM_ENDPOINT
