@@ -4,9 +4,6 @@ metadata:
   name: jasper-jwt-config
 type: Opaque
 data:
-{{- range .Values.config.tenants }}
-{{- $tenant := default "default" .origin | replace "@" "" | upper }}
-{{- if .clientSecret }}
-  {{ $tenant }}: {{ .clientSecret | b64enc | b64enc }}
-{{- end }}
+{{- if .Values.config.override.security.clientSecret }}
+  override: {{ .Values.config.override.security.clientSecret | b64enc }}
 {{- end }}

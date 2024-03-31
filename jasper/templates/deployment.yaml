@@ -40,6 +40,8 @@ spec:
           env:
             - name: SERVER_PORT
               value: "8081"
+            - name: JASPER_HEAP
+              value: {{ .Values.heap }}
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.config.profiles }}
             - name: SPRING_DATASOURCE_URL
@@ -51,90 +53,53 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.postgresql.fullnameOverride }}
                   key: postgres-password
+            - name: JASPER_SCRAPE_DELAY_MIN
+              value: {{ .Values.config.scrapeDelayMin | quote }}
+            - name: JASPER_SCRAPE_INTERVAL_MIN
+              value: {{ .Values.config.scrapeIntervalMin | quote }}
+            - name: JASPER_PULL_DELAY_MIN
+              value: {{ .Values.config.pullDelayMin | quote }}
+            - name: JASPER_PULL_INTERVAL_MIN
+              value: {{ .Values.config.pullIntervalMin | quote }}
             - name: JASPER_MIN_ROLE
               value: {{ .Values.config.minRole }}
+            - name: JASPER_DEFAULT_ROLE
+              value: {{ .Values.config.defaultRole }}
             - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
               value: {{ .Values.config.allowLocalOriginHeader | quote }}
-            {{- range .Values.config.tenants }}
-            {{- $tenant := default "default" .origin | replace "@" "" | upper }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_CLIENT_ID
-              value: {{ .clientId }}
-            {{- if .clientSecret }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_BASE64_SECRET
+            - name: JASPER_ALLOW_USER_TAG_HEADER
+              value: {{ .Values.config.allowUserTagHeader | quote }}
+            - name: JASPER_ALLOW_USER_ROLE_HEADER
+              value: {{ .Values.config.allowUserRoleHeader | quote }}
+            - name: JASPER_ALLOW_AUTH_HEADERS
+              value: {{ .Values.config.allowAuthHeaders | quote }}
+            - name: JASPER_OVERRIDE_SECURITY_MODE
+              value: {{ .Values.config.override.security.mode }}
+            - name: JASPER_OVERRIDE_SECURITY_CLIENT_ID
+              value: {{ .Values.config.override.security.clientId }}
+            {{- if .Values.config.override.security.clientSecret }}
+            - name: JASPER_OVERRIDE_SECURITY_BASE64_SECRET
               valueFrom:
                 secretKeyRef:
                   name: jasper-jwt-config
-                  key: {{ $tenant }}
+                  key: override
             {{- end }}
-            {{- if .jwtAlg }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_ALG
-              value: {{ .jwtAlg }}
-            {{- end }}
-            {{- if .jwksUri }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_JWKS_URI
-              value: {{ .jwksUri }}
-            {{- end }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_DEFAULT_ROLE
-              value: {{ .defaultRole }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_USERNAME_CLAIM
-              value: {{ .usernameClaim }}
-            {{- if .allowUsernameClaimOrigin }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USERNAME_CLAIM_ORIGIN
-              value: {{ .allowUsernameClaimOrigin | quote }}
-            {{- end }}
-            {{- if .allowUserTagHeader }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USER_TAG_HEADER
-              value: {{ .allowUserTagHeader | quote }}
-            {{- end }}
-            {{- if .allowUserRoleHeader }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_USER_ROLE_HEADER
-              value: {{ .allowUserRoleHeader | quote }}
-            {{- end }}
-            {{- if .allowAuthHeaders }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_ALLOW_AUTH_HEADERS
-              value: {{ .allowAuthHeaders | quote }}
-            {{- end }}
-            {{- if .tenantAccess }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_TENANT_ACCESS
-              value: {{ join "," .tenantAccess | quote }}
-            {{- end }}
-            {{- if .tokenEndpoint }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_AUTHENTICATION_JWT_TOKEN_ENDPOINT
-              value: {{ .tokenEndpoint }}
-            {{- end }}
-            {{- if .scimEndpoint }}
-            - name: JASPER_SECURITY_CLIENTS_{{ $tenant }}_SCIM_ENDPOINT
-              value: {{ .scimEndpoint }}
-            {{- end }}
-            {{- end }}
+            - name: JASPER_OVERRIDE_SECURITY_JWKS_URI
+              value: {{ .Values.config.override.security.jwksUri }}
+            - name: JASPER_OVERRIDE_SECURITY_TOKEN_ENDPOINT
+              value: {{ .Values.config.override.security.tokenEndpoint }}
+            - name: JASPER_OVERRIDE_SECURITY_SCIM_ENDPOINT
+              value: {{ .Values.config.override.security.scimEndpoint }}
+            - name: JASPER_SSH_CONFIG_NAMESPACE
+              value: {{ .Values.config.sshConfigNamespace | quote }}
+            - name: JASPER_SSH_CONFIG_MAP_NAME
+              value: {{ .Values.config.sshConfigMapName | quote }}
             - name: JASPER_MAIL_HOST
               value: {{ .Values.config.mail.host | quote }}
             - name: JASPER_MAIL_PORT
               value: {{ .Values.config.mail.port | quote }}
             - name: JASPER_MAIL_PROPERTIES_MAIL_SMTP_LOCALHOST
               value: {{ .Values.config.mail.localhost | quote }}
-            - name: JASPER_ASYNC_DELAY_SEC
-              value: {{ .Values.config.asyncDelaySec | quote }}
-            - name: JASPER_ASYNC_INTERVAL_SEC
-              value: {{ .Values.config.asyncIntervalSec | quote }}
-            - name: JASPER_SCRAPE_DELAY_MIN
-              value: {{ .Values.config.scrapeDelayMin | quote }}
-            - name: JASPER_SCRAPE_INTERVAL_MIN
-              value: {{ .Values.config.scrapeIntervalMin | quote }}
-            - name: JASPER_REPLICATE_DELAY_MIN
-              value: {{ .Values.config.replicateDelayMin | quote }}
-            - name: JASPER_REPLICATE_INTERVAL_MIN
-              value: {{ .Values.config.replicateIntervalMin | quote }}
-            - name: JASPER_SSH_DELAY_MIN
-              value: {{ .Values.config.sshDelayMin | quote }}
-            - name: JASPER_SSH_INTERVAL_MIN
-              value: {{ .Values.config.sshIntervalMin | quote }}
-            - name: JASPER_SSH_CONFIG_NAMESPACE
-              value: {{ .Values.config.sshConfigNamespace | quote }}
-            - name: JASPER_SSH_CONFIG_MAP_NAME
-              value: {{ .Values.config.sshConfigMapName | quote }}
-            - name: JASPER_HEAP
-              value: {{ .Values.heap }}
           volumeMounts:
             - name: storage
               mountPath: "/var/lib/jasper"

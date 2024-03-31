@@ -12,33 +12,26 @@ image:
 
 config:
   profiles: prod
-  minRole: ROLE_ANONYMOUS
-  allowLocalOriginHeader: false
-  asyncIntervalSec: 60
-  asyncDelaySec: 120
   scrapeIntervalMin: 1
   scrapeDelayMin: 5
-  replicateIntervalMin: 1
-  replicateDelayMin: 5
-  sshIntervalMin: 1
-  sshDelayMin: 5
+  pullIntervalMin: 1
+  pullDelayMin: 5
+  minRole: ROLE_ANONYMOUS
+  defaultRole: ROLE_ANONYMOUS
+  allowLocalOriginHeader: false
+  allowUserTagHeader: false
+  allowUserRoleHeader: false
+  allowAuthHeaders: false
   sshConfigNamespace: "default"
   sshConfigMapName: "ssh-authorized-keys"
-  tenants:
-    - origin: ""
-      clientId: ""
-      clientSecret: ""
-      jwtAlg: ""
-      jwksUri: ""
-      tokenEndpoint: ""
-      scimEndpoint: ""
-      defaultRole: ROLE_ANONYMOUS
-      usernameClaim: sub
-      allowUsernameClaimOrigin: false
-      allowUserTagHeader: false
-      allowUserRoleHeader: false
-      allowAuthHeaders: false
-#      tenantAccess: ['']
+  override:
+    security:
+      mode: ''
+      clientId: ''
+      clientSecret: ''
+      jwksUri: ''
+      tokenEndpoint: ''
+      scimEndpoint: ''
   mail:
     host: smtp-relay.gmail.com
     port: 587
