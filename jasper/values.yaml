@@ -123,6 +123,7 @@ ingress:
       tagReadAccess: ""
       tagWriteAccess: ""
       annotations: {}
+      serverSnippet: "#"
       host: chart-example.local
       path: /api
       websockets: true
