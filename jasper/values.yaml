@@ -123,6 +123,7 @@ ingress:
       tagReadAccess: ""
       tagWriteAccess: ""
       annotations: {}
+      serverSnippet: ""
       host: chart-example.local
       path: /api
       websockets: true
@@ -130,6 +131,7 @@ ingress:
       publicApi: true
       publicApiPath: /pub
       publicApiAnnotations: {}
+      publicApiServerSnippet: ""
       pathType: ImplementationSpecific
       tlsSecretName: chart-example-tls
 
