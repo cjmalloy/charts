@@ -10,7 +10,11 @@ metadata:
   labels:
     {{- include "jasper.labels" $ | nindent 4 }}
   annotations:
+    {{- with .publicApiAnnotations }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
     nginx.ingress.kubernetes.io/server-snippet: |
+      {{ .publicApiServerSnippet }}
       more_set_input_headers "Local-Origin: {{ .origin }}";
       more_set_input_headers "User-Tag: {{ .userTag }}";
       more_set_input_headers "User-Role: {{ .userRole }}";
@@ -18,9 +22,6 @@ metadata:
       more_set_input_headers "Write-Access: {{ .writeAccess }}";
       more_set_input_headers "Tag-Read-Access: {{ .tagReadAccess }}";
       more_set_input_headers "Tag-Write-Access: {{ .tagWriteAccess }}";
-    {{- with .publicApiAnnotations }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   ingressClassName: {{ $.Values.ingress.className }}
   {{- if .tlsSecretName }}
