@@ -1,4 +1,4 @@
-{{- if .Values.workload.workload }}
+{{- if .Values.workload.origins }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -6,7 +6,8 @@ metadata:
   labels:
     {{- include "jasper.labels" . | nindent 4 }}
 spec:
-  replicas: {{ len .Values.workload.workloadOrigins }}
+  serviceName: {{ include "jasper.fullname" . }}-workload-headless
+  replicas: {{ len .Values.workload.origins }}
   selector:
     matchLabels:
       {{- include "jasper.selectorLabels" . | nindent 6 }}
@@ -40,7 +41,7 @@ spec:
             - name: SERVER_PORT
               value: "8081"
             - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.workload.workloadProfiles }}
+              value: {{ .Values.workload.profiles }}
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://{{ .Values.postgresql.fullnameOverride }}:5432/{{ .Values.postgresql.auth.database }}
             - name: SPRING_DATASOURCE_USERNAME
@@ -51,13 +52,13 @@ spec:
                   name: {{ .Values.postgresql.fullnameOverride }}
                   key: postgres-password
             - name: JASPER_WORKLOAD
-              value: {{ join "," .Values.workload.origins }}
+              value: {{ join "," .Values.workload.origins | quote }}
             - name: JASPER_WORKER
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
             - name: JASPER_MIN_ROLE
-              value: ROLE_ADMIN
+              value: {{ .Values.workload.minRole }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.workload.scrapeDelayMin | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
@@ -72,17 +73,6 @@ spec:
               value: {{ .Values.workload.sshConfigMapName | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
-          livenessProbe:
-            initialDelaySeconds: 90
-            failureThreshold: 10
-            httpGet:
-              path: /management/health/liveness
-              port: http
-          readinessProbe:
-            initialDelaySeconds: 15
-            httpGet:
-              path: /management/health/readiness
-              port: http
           resources:
             {{- toYaml .Values.workload.resources | nindent 12 }}
       {{- with .Values.workload.nodeSelector }}
@@ -97,4 +87,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jasper.fullname" . }}-workload-headless
+spec:
+  clusterIP: None
 {{- end -}}
