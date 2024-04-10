@@ -159,7 +159,16 @@ nodeSelector: {}
 
 tolerations: []
 
-affinity: {}
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: affinity
+              operator: In
+              values:
+                - worker
+        topologyKey: "kubernetes.io/hostname"
 
 sshTunnel:
   enabled: false
@@ -268,4 +277,14 @@ workload:
 
   tolerations: [ ]
 
-  affinity: { }
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: affinity
+                operator: In
+                values:
+                  - web
+          topologyKey: "kubernetes.io/hostname"
