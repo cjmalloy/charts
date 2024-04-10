@@ -37,6 +37,7 @@ config:
     host: smtp-relay.gmail.com
     port: 587
     localhost: jasper.local
+  redis: ''
 
 smtp:
   enabled: false
@@ -53,14 +54,6 @@ postgresql:
   primary:
     extendedConfiguration: |-
       default_text_search_config = 'pg_catalog.english'
-
-redis:
-  fullnameOverride: jasper-redis
-  master:
-    persistence:
-      enabled: false
-  metrics:
-    enabled: true
 
 imagePullSecrets: []
 nameOverride: ""
@@ -241,6 +234,7 @@ workload:
   scrapeDelayMin: 5
   pullIntervalMin: 1
   pullDelayMin: 5
+  minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
   allowLocalOriginHeader: false
   allowUserTagHeader: false
