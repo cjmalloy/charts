@@ -42,7 +42,7 @@ spec:
             - name: SERVER_PORT
               value: "8081"
             - name: JASPER_HEAP
-              value: {{ .Values.heap }}
+              value: {{ .Values.config.heap }}
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.config.profiles }}
             - name: SPRING_DATASOURCE_URL

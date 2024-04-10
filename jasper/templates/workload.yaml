@@ -41,6 +41,8 @@ spec:
           env:
             - name: SERVER_PORT
               value: "8081"
+            - name: JASPER_HEAP
+              value: {{ .Values.workload.heap }}
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.workload.profiles }}
             - name: SPRING_DATASOURCE_URL
@@ -74,8 +76,6 @@ spec:
               value: {{ .Values.workload.sshConfigNamespace | quote }}
             - name: JASPER_SSH_CONFIG_MAP_NAME
               value: {{ .Values.workload.sshConfigMapName | quote }}
-            - name: JASPER_HEAP
-              value: {{ .Values.heap }}
           livenessProbe:
             initialDelaySeconds: 90
             failureThreshold: 10
