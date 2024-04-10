@@ -81,12 +81,12 @@ spec:
             failureThreshold: 10
             httpGet:
               path: /management/health/liveness
-              port: metrics
+              port: 8081
           readinessProbe:
             initialDelaySeconds: 15
             httpGet:
               path: /management/health/readiness
-              port: metrics
+              port: 8081
           resources:
             {{- toYaml .Values.workload.resources | nindent 12 }}
       {{- with .Values.workload.nodeSelector }}
