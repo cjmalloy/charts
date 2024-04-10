@@ -34,7 +34,13 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: 8081
+              protocol: TCP
           env:
+            - name: SERVER_PORT
+              value: "8081"
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.workload.profiles }}
             - name: SPRING_DATASOURCE_URL
@@ -70,6 +76,17 @@ spec:
               value: {{ .Values.workload.sshConfigMapName | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.heap }}
+          livenessProbe:
+            initialDelaySeconds: 90
+            failureThreshold: 10
+            httpGet:
+              path: /management/health/liveness
+              port: metrics
+          readinessProbe:
+            initialDelaySeconds: 15
+            httpGet:
+              path: /management/health/readiness
+              port: metrics
           resources:
             {{- toYaml .Values.workload.resources | nindent 12 }}
       {{- with .Values.workload.nodeSelector }}

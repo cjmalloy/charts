@@ -277,7 +277,6 @@ workload:
 
   tolerations: [ ]
 
-
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
