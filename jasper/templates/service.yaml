@@ -12,4 +12,5 @@ spec:
       protocol: TCP
       name: http
   selector:
+    affinity: web
     {{- include "jasper.selectorLabels" . | nindent 4 }}
