@@ -1,4 +1,4 @@
-{{- if .Values.workload.workload }}
+{{- if .Values.workload.origins }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "jasper.labels" . | nindent 4 }}
 spec:
-  replicas: {{ len .Values.workload.workloadOrigins }}
+  replicas: {{ len .Values.workload.origins }}
   selector:
     matchLabels:
       {{- include "jasper.selectorLabels" . | nindent 6 }}
@@ -40,7 +40,7 @@ spec:
             - name: SERVER_PORT
               value: "8081"
             - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.workload.workloadProfiles }}
+              value: {{ .Values.workload.profiles }}
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://{{ .Values.postgresql.fullnameOverride }}:5432/{{ .Values.postgresql.auth.database }}
             - name: SPRING_DATASOURCE_USERNAME
@@ -51,7 +51,7 @@ spec:
                   name: {{ .Values.postgresql.fullnameOverride }}
                   key: postgres-password
             - name: JASPER_WORKLOAD
-              value: {{ join "," .Values.workload.origins }}
+              value: {{ join "," .Values.workload.origins | quote }}
             - name: JASPER_WORKER
               valueFrom:
                 fieldRef:
