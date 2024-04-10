@@ -54,6 +54,14 @@ postgresql:
     extendedConfiguration: |-
       default_text_search_config = 'pg_catalog.english'
 
+redis:
+  fullnameOverride: jasper-redis
+  master:
+    persistence:
+      enabled: false
+  metrics:
+    enabled: true
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -225,7 +233,6 @@ sshTunnel:
   tolerations: [ ]
 
   affinity: { }
-
 
 workload:
   origins: []
