@@ -115,9 +115,9 @@ persistence:
 
 ingress:
   enabled: false
-  className: ""
   tenants:
     - origin: ""
+      className: ""
       userTag: ""
       userRole: ""
       readAccess: ""
@@ -129,6 +129,7 @@ ingress:
       path: /api
       websockets: true
       websocketPath: /websocket
+      publicClassName: ""
       publicApi: true
       publicApiPath: /pub
       publicApiAnnotations: {}

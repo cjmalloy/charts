@@ -22,7 +22,7 @@ metadata:
       more_set_input_headers "Tag-Read-Access: {{ .tagReadAccess }}";
       more_set_input_headers "Tag-Write-Access: {{ .tagWriteAccess }}";
 spec:
-  ingressClassName: {{ $.Values.ingress.className }}
+  ingressClassName: {{ .publicClassName }}
   {{- if .tlsSecretName }}
   tls:
     - hosts:
