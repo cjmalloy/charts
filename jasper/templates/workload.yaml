@@ -1,0 +1,100 @@
+{{- if .Values.workload.workload }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "jasper.fullname" . }}-workload
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  replicas: {{ len .Values.workload.workloadOrigins }}
+  selector:
+    matchLabels:
+      {{- include "jasper.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jasper.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "jasper.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          env:
+            - name: SERVER_PORT
+              value: "8081"
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.workload.workloadProfiles }}
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://{{ .Values.postgresql.fullnameOverride }}:5432/{{ .Values.postgresql.auth.database }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.fullnameOverride }}
+                  key: postgres-password
+            - name: JASPER_WORKLOAD
+              value: {{ join "," .Values.workload.origins }}
+            - name: JASPER_WORKER
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JASPER_MIN_ROLE
+              value: ROLE_ADMIN
+            - name: JASPER_SCRAPE_DELAY_MIN
+              value: {{ .Values.workload.scrapeDelayMin | quote }}
+            - name: JASPER_SCRAPE_INTERVAL_MIN
+              value: {{ .Values.workload.scrapeIntervalMin | quote }}
+            - name: JASPER_PULL_DELAY_MIN
+              value: {{ .Values.workload.pullDelayMin | quote }}
+            - name: JASPER_PULL_INTERVAL_MIN
+              value: {{ .Values.workload.pullIntervalMin | quote }}
+            - name: JASPER_SSH_CONFIG_NAMESPACE
+              value: {{ .Values.workload.sshConfigNamespace | quote }}
+            - name: JASPER_SSH_CONFIG_MAP_NAME
+              value: {{ .Values.workload.sshConfigMapName | quote }}
+            - name: JASPER_HEAP
+              value: {{ .Values.heap }}
+          livenessProbe:
+            initialDelaySeconds: 90
+            failureThreshold: 10
+            httpGet:
+              path: /management/health/liveness
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 15
+            httpGet:
+              path: /management/health/readiness
+              port: http
+          resources:
+            {{- toYaml .Values.workload.resources | nindent 12 }}
+      {{- with .Values.workload.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.workload.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.workload.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end -}}
