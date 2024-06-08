@@ -41,6 +41,10 @@ spec:
           env:
             - name: SERVER_PORT
               value: "8081"
+            - name: SPRING_TASK_EXECUTION_POOL_CORE_SIZE
+              value: {{ .Values.config.task.threads.min | quote }}
+            - name: SPRING_TASK_EXECUTION_POOL_MAX_SIZE
+              value: {{ .Values.config.task.threads.max | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.config.heap }}
             - name: SPRING_PROFILES_ACTIVE

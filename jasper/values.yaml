@@ -25,6 +25,10 @@ config:
   sshConfigNamespace: "default"
   sshConfigMapName: "ssh-authorized-keys"
   heap: 512m
+  task:
+    threads:
+      min: 2
+      max: 20
   override:
     security:
       mode: ''
