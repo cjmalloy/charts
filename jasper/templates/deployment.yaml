@@ -118,7 +118,7 @@ spec:
           livenessProbe:
             initialDelaySeconds: 90
             failureThreshold: 10
-            timeoutSeconds: 5
+            timeoutSeconds: {{ .Values.config.task.livenessTimeout }}
             httpGet:
               path: /management/health/liveness
               port: http

@@ -26,6 +26,7 @@ config:
   sshConfigMapName: "ssh-authorized-keys"
   heap: 512m
   task:
+    livenessTimeout: 5
     threads:
       min: 2
       max: 20
