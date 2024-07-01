@@ -64,6 +64,14 @@ spec:
                   fieldPath: metadata.name
             - name: JASPER_MIN_ROLE
               value: {{ .Values.workload.minRole }}
+            - name: JASPER_ALLOW_LOCAL_ORIGIN_HEADER
+              value: {{ .Values.workload.allowLocalOriginHeader | quote }}
+            - name: JASPER_ALLOW_USER_TAG_HEADER
+              value: {{ .Values.workload.allowUserTagHeader | quote }}
+            - name: JASPER_ALLOW_USER_ROLE_HEADER
+              value: {{ .Values.workload.allowUserRoleHeader | quote }}
+            - name: JASPER_ALLOW_AUTH_HEADERS
+              value: {{ .Values.workload.allowAuthHeaders | quote }}
             - name: JASPER_SCRAPE_DELAY_MIN
               value: {{ .Values.workload.scrapeDelayMin | quote }}
             - name: JASPER_SCRAPE_INTERVAL_MIN
