@@ -39,7 +39,7 @@ config:
   issuer: ""
   clientId: ""
   scope: "openid email"
-  preAuthScrape: true
+  prefetch: false
   cspDefaultSrc: ""
   cspScriptSrc: ""
   cspStyleSrc: ""
