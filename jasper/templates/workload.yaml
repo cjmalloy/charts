@@ -56,6 +56,8 @@ spec:
                   key: postgres-password
             - name: SPRING_REDIS_HOST
               value: {{ .Values.config.redis }}
+            - name: SPRING_DATA_REDIS_HOST
+              value: {{ .Values.config.redis }}
             - name: JASPER_WORKLOAD
               value: {{ join "," .Values.workload.origins | quote }}
             - name: JASPER_WORKER
