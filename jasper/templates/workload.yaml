@@ -89,7 +89,7 @@ spec:
             - name: JASPER_SSH_CONFIG_MAP_NAME
               value: {{ .Values.workload.sshConfigMapName | quote }}
           livenessProbe:
-            initialDelaySeconds: 90
+            initialDelaySeconds: 120
             failureThreshold: 10
             httpGet:
               path: /management/health/liveness
