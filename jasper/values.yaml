@@ -194,6 +194,8 @@ sshTunnel:
   tagWriteAccess: ""
   authorizedKeys: ""
   authorizedKeysConfigMap: ""
+  hostKey: ""
+  hostKeySecret: ""
 
   terminationGracePeriodSeconds: 60
 

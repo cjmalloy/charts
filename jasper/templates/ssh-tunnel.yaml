@@ -58,11 +58,22 @@ spec:
             - name: AUTHORIZED_KEYS
               value: {{ .Values.sshTunnel.authorizedKeys | quote }}
               {{- end }}
-          {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
+              {{- if .Values.sshTunnel.hostKey }}
+            - name: HOST_KEY
+              value: {{ .Values.sshTunnel.hostKey | quote }}
+              {{- end }}
+
+          {{- if or .Values.sshTunnel.authorizedKeysConfigMap .Values.sshTunnel.hostKeySecret }}
           volumeMounts:
+          {{- end }}
+            {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
             - mountPath: /config
               name: config
-          {{- end }}
+            {{- end }}
+            {{- if .Values.sshTunnel.hostKeySecret }}
+            - mountPath: /secrets
+              name: secrets
+            {{- end }}
           livenessProbe:
             initialDelaySeconds: 5
             exec:
@@ -85,5 +96,11 @@ spec:
         - name: config
           configMap:
             name: {{ .Values.sshTunnel.authorizedKeysConfigMap }}
+      {{- end }}
+      {{- if .Values.sshTunnel.hostKeySecret }}
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ .Values.sshTunnel.hostKeySecret }}
       {{- end }}
 {{- end }}
