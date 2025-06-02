@@ -16,6 +16,7 @@ fullnameOverride: ""
 
 config:
   title: Jasper
+  locale: ""
   baseHref: /
   jasperApi: /
   jasperLogout: ""
