@@ -68,6 +68,8 @@ spec:
               value: http://{{ include "jasper.fullname" . }}
             - name: JASPER_MIN_ROLE
               value: {{ .Values.workload.minRole }}
+            - name: JASPER_ALLOW_USER_TAG_HEADER
+              value: {{ .Values.workload.allowUserTagHeader | quote }}
             - name: JASPER_ALLOW_USER_ROLE_HEADER
               value: {{ .Values.workload.allowUserRoleHeader | quote }}
             - name: JASPER_ALLOW_AUTH_HEADERS

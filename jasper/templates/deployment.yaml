@@ -74,6 +74,8 @@ spec:
               value: {{ .Values.config.minRole }}
             - name: JASPER_DEFAULT_ROLE
               value: {{ .Values.config.defaultRole }}
+            - name: JASPER_ALLOW_USER_TAG_HEADER
+              value: {{ .Values.config.allowUserTagHeader | quote }}
             - name: JASPER_ALLOW_USER_ROLE_HEADER
               value: {{ .Values.config.allowUserRoleHeader | quote }}
             - name: JASPER_ALLOW_AUTH_HEADERS

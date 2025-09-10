@@ -18,6 +18,7 @@ config:
   pullDelayMin: 5
   minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
+  allowUserTagHeader: false
   allowUserRoleHeader: false
   allowAuthHeaders: false
   sshConfigNamespace: "default"
@@ -251,6 +252,7 @@ workload:
   pullDelayMin: 5
   minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
+  allowUserTagHeader: false
   allowUserRoleHeader: false
   allowAuthHeaders: false
   sshConfigNamespace: "default"
