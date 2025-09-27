@@ -81,7 +81,7 @@ spec:
             - name: JASPER_ALLOW_AUTH_HEADERS
               value: {{ .Values.config.allowAuthHeaders | quote }}
             - name: JASPER_SECURITY_CONTENT_SECURITY_POLICY
-              value: {{ .Values.config.csp }}
+              value: {{ .Values.config.csp | quote }}
             - name: JASPER_OVERRIDE_SECURITY_MODE
               value: {{ .Values.config.override.security.mode }}
             - name: JASPER_OVERRIDE_SECURITY_CLIENT_ID
