@@ -101,6 +101,12 @@ spec:
               value: {{ .Values.config.override.security.tokenEndpoint }}
             - name: JASPER_OVERRIDE_SECURITY_SCIM_ENDPOINT
               value: {{ .Values.config.override.security.scimEndpoint }}
+            - name: JASPER_OVERRIDE_SECURITY_MAX_REQUESTS
+              value: {{ .Values.config.maxRequestsOrigin | quote }}
+            - name: JASPER_OVERRIDE_SERVER_MAX_REQUESTS
+              value: {{ .Values.config.maxRequests | quote }}
+            - name: JASPER_OVERRIDE_SERVER_MAX_CONCURRENT_REQUESTS
+              value: {{ .Values.config.maxConcurrentRequests | quote }}
             - name: JASPER_SSH_CONFIG_NAMESPACE
               value: {{ .Values.config.sshConfigNamespace | quote }}
             - name: JASPER_SSH_CONFIG_MAP_NAME

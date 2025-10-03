@@ -23,6 +23,9 @@ config:
   allowAuthHeaders: false
   sshConfigNamespace: "default"
   sshConfigMapName: "ssh-authorized-keys"
+  maxRequests: ""
+  maxConcurrentRequests: ""
+  maxRequestsOrigin: ""
   heap: 512m
   task:
     livenessTimeout: 5
