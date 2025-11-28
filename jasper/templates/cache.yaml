@@ -62,6 +62,8 @@ spec:
               value: http://{{ include "jasper.fullname" . }}-cache
             - name: JASPER_MIN_ROLE
               value: {{ .Values.cache.minRole }}
+            - name: JASPER_DEFAULT_ROLE
+              value: {{ .Values.cache.defaultRole }}
             - name: JASPER_ALLOW_USER_TAG_HEADER
               value: {{ .Values.cache.allowUserTagHeader | quote }}
             - name: JASPER_ALLOW_USER_ROLE_HEADER
