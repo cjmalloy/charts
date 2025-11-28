@@ -41,10 +41,6 @@ spec:
           env:
             - name: SERVER_PORT
               value: "8081"
-            - name: SPRING_TASK_EXECUTION_POOL_CORE_SIZE
-              value: {{ .Values.config.task.threads.min | quote }}
-            - name: SPRING_TASK_EXECUTION_POOL_MAX_SIZE
-              value: {{ .Values.config.task.threads.max | quote }}
             - name: JASPER_HEAP
               value: {{ .Values.config.heap }}
             - name: SPRING_PROFILES_ACTIVE
@@ -62,14 +58,6 @@ spec:
               value: {{ .Values.config.redis }}
             - name: SPRING_DATA_REDIS_HOST
               value: {{ .Values.config.redis }}
-            - name: JASPER_SCRAPE_DELAY_MIN
-              value: {{ .Values.config.scrapeDelayMin | quote }}
-            - name: JASPER_SCRAPE_INTERVAL_MIN
-              value: {{ .Values.config.scrapeIntervalMin | quote }}
-            - name: JASPER_PULL_DELAY_MIN
-              value: {{ .Values.config.pullDelayMin | quote }}
-            - name: JASPER_PULL_INTERVAL_MIN
-              value: {{ .Values.config.pullIntervalMin | quote }}
             - name: JASPER_MIN_ROLE
               value: {{ .Values.config.minRole }}
             - name: JASPER_DEFAULT_ROLE
@@ -117,6 +105,10 @@ spec:
               value: {{ .Values.config.mail.port | quote }}
             - name: JASPER_MAIL_PROPERTIES_MAIL_SMTP_LOCALHOST
               value: {{ .Values.config.mail.localhost | quote }}
+            {{- if .Values.cache.enabled }}
+            - name: JASPER_CACHE_API
+              value: http://{{ include "jasper.fullname" . }}-cache
+            {{- end }}
           volumeMounts:
             - name: storage
               mountPath: "/var/lib/jasper"
@@ -126,7 +118,7 @@ spec:
           livenessProbe:
             initialDelaySeconds: 90
             failureThreshold: 10
-            timeoutSeconds: {{ .Values.config.task.livenessTimeout }}
+            timeoutSeconds: {{ .Values.config.livenessTimeout }}
             httpGet:
               path: /management/health/liveness
               port: http
@@ -166,7 +158,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-    {{- if .Values.persistence.enabled }}
+    {{- if and not .Values.cache.enabled .Values.persistence.enabled }}
         - name: storage
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "jasper.fullname" .) }}
