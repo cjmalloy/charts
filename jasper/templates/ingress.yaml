@@ -48,21 +48,21 @@ spec:
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
-          {{- if $.Values.cache.enabled -}}
+          {{- if $.Values.cache.enabled }}
           - path: {{ .path }}/v1/proxy
             pathType: {{ .pathType }}
             backend:
               service:
                 name: {{ $fullName }}-cache
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ $.Values.cache.service.port }}
           - path: {{ .path }}/v1/backup
             pathType: {{ .pathType }}
             backend:
               service:
                 name: {{ $fullName }}-cache
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ $.Values.cache.service.port }}
           {{- end }}
 ---
 {{- end }}
