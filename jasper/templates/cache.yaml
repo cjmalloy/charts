@@ -70,6 +70,23 @@ spec:
               value: {{ .Values.cache.allowAuthHeaders | quote }}
             - name: JASPER_SECURITY_CONTENT_SECURITY_POLICY
               value: {{ .Values.cache.csp | quote }}
+            - name: JASPER_OVERRIDE_SECURITY_MODE
+              value: {{ .Values.config.override.security.mode }}
+            - name: JASPER_OVERRIDE_SECURITY_CLIENT_ID
+              value: {{ .Values.config.override.security.clientId }}
+            {{- if .Values.config.override.security.clientSecret }}
+            - name: JASPER_OVERRIDE_SECURITY_BASE64_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jasper-jwt-config
+                  key: override
+            {{- end }}
+            - name: JASPER_OVERRIDE_SECURITY_JWKS_URI
+              value: {{ .Values.config.override.security.jwksUri }}
+            - name: JASPER_OVERRIDE_SECURITY_USERNAME_CLAIM
+              value: {{ .Values.config.override.security.usernameClaim }}
+            - name: JASPER_OVERRIDE_SECURITY_TOKEN_ENDPOINT
+              value: {{ .Values.config.override.security.tokenEndpoint }}
             - name: JASPER_OVERRIDE_SECURITY_MAX_REQUESTS
               value: {{ .Values.cache.maxRequestsOrigin | quote }}
             - name: JASPER_OVERRIDE_SERVER_MAX_REQUESTS
