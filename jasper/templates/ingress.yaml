@@ -32,7 +32,115 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          - path: {{ .path }}
+          {{- if $.Values.cache.enabled }}
+          - path: {{ .path }}/v1/proxy
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}-cache
+                port:
+                  number: {{ $.Values.cache.service.port }}
+          - path: {{ .path }}/v1/scrape
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}-cache
+                port:
+                  number: {{ $.Values.cache.service.port }}
+          - path: {{ .path }}/v1/backup
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}-cache
+                port:
+                  number: {{ $.Values.cache.service.port }}
+          {{- else }}
+          - path: {{ .path }}/v1/proxy
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/scrape
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/backup
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          {{- end }}
+          - path: {{ .path }}/v1/ref
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/ext
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/user
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/plugin
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/template
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/template
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/tags
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/origin
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/oembed
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.service.port }}
+          - path: {{ .path }}/v1/graph
             pathType: {{ .pathType }}
             backend:
               service:
@@ -47,22 +155,6 @@ spec:
                 name: {{ $fullName }}
                 port:
                   number: {{ $.Values.service.port }}
-          {{- end }}
-          {{- if $.Values.cache.enabled }}
-          - path: {{ .path }}/v1/proxy
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ $fullName }}-cache
-                port:
-                  number: {{ $.Values.cache.service.port }}
-          - path: {{ .path }}/v1/backup
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ $fullName }}-cache
-                port:
-                  number: {{ $.Values.cache.service.port }}
           {{- end }}
 ---
 {{- end }}
