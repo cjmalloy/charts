@@ -9,7 +9,7 @@ metadata:
   labels:
     {{- include "jasper.labels" $ | nindent 4 }}
   annotations:
-    {{- with $.Values.cache.ingress.apiAnnotations }}
+    {{- with $.Values.cache.ingress.annotations }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
     nginx.ingress.kubernetes.io/server-snippet: |

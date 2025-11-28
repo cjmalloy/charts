@@ -302,7 +302,7 @@ cache:
 
   ingress:
     enabled: true
-    apiAnnotations: { }
+    annotations: { }
 
   service:
     type: ClusterIP
