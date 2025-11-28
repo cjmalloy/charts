@@ -286,7 +286,7 @@ workload:
           topologyKey: "kubernetes.io/hostname"
 
 cache:
-  enabled: true
+  enabled: false
   profiles: prod
   minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
