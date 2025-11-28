@@ -158,7 +158,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-    {{- if and not .Values.cache.enabled .Values.persistence.enabled }}
+    {{- if and (not .Values.cache.enabled) .Values.persistence.enabled }}
         - name: storage
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "jasper.fullname" .) }}
