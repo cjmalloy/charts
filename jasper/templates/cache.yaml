@@ -10,7 +10,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "jasper.selectorLabels" . | nindent 6 }}
+      {{- include "jasper.cache.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,8 +18,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        affinity: worker
-        {{- include "jasper.selectorLabels" . | nindent 8 }}
+        affinity: cache
+        {{- include "jasper.cache.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

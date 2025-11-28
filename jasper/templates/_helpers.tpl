@@ -49,12 +49,12 @@ Selector labels
 app.kubernetes.io/name: {{ include "jasper.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "jasper.feedScraper.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "jasper.name" . }}-feed-scraper
+{{- define "jasper.workload.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "jasper.name" . }}-workload
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+{{- define "jasper.cache.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "jasper.name" . }}-cache
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
