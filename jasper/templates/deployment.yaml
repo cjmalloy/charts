@@ -112,9 +112,9 @@ spec:
           volumeMounts:
             - name: storage
               mountPath: "/var/lib/jasper"
-          {{- if .Values.persistence.subPath }}
+              {{- if .Values.persistence.subPath }}
               subPath: {{ .Values.persistence.subPath }}
-          {{- end }}
+              {{- end }}
           livenessProbe:
             initialDelaySeconds: 90
             failureThreshold: 10

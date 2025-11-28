@@ -109,6 +109,12 @@ spec:
               port: 8081
           resources:
             {{- toYaml .Values.cache.resources | nindent 12 }}
+          volumeMounts:
+            - name: storage
+              mountPath: "/var/lib/jasper"
+              {{- if .Values.persistence.subPath }}
+              subPath: {{ .Values.persistence.subPath }}
+              {{- end }}
       {{- with .Values.cache.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
