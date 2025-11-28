@@ -39,6 +39,13 @@ spec:
                 name: {{ $fullName }}
                 port:
                   number: {{ $.Values.cache.service.port }}
+          - path: /api/v1/backup
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ $.Values.cache.service.port }}
 ---
 {{- end }}
 {{- end }}
