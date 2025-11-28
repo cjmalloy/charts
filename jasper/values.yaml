@@ -12,10 +12,6 @@ image:
 
 config:
   profiles: prod
-  scrapeIntervalMin: 1
-  scrapeDelayMin: 5
-  pullIntervalMin: 1
-  pullDelayMin: 5
   minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
   allowUserTagHeader: false
@@ -27,11 +23,7 @@ config:
   maxConcurrentRequests: ""
   maxRequestsOrigin: ""
   heap: 512m
-  task:
-    livenessTimeout: 5
-    threads:
-      min: 2
-      max: 20
+  livenessTimeout: 5
   csp: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
   override:
     security:
@@ -257,10 +249,6 @@ sshTunnel:
 workload:
   origins: []
   profiles: prod
-  scrapeIntervalMin: 1
-  scrapeDelayMin: 5
-  pullIntervalMin: 1
-  pullDelayMin: 5
   minRole: ROLE_ANONYMOUS
   defaultRole: ROLE_ANONYMOUS
   allowUserTagHeader: false
@@ -269,15 +257,6 @@ workload:
   sshConfigNamespace: "default"
   sshConfigMapName: "ssh-authorized-keys"
   heap: 512m
-  override:
-    security:
-      mode: ''
-      clientId: ''
-      clientSecret: ''
-      jwksUri: ''
-      usernameClaim: ''
-      tokenEndpoint: ''
-      scimEndpoint: ''
 
   resources: { }
     # We usually recommend not to specify default resources and to leave this as a conscious
@@ -288,8 +267,54 @@ workload:
     #   cpu: 100m
     #   memory: 128Mi
     # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  nodeSelector: { }
+
+  tolerations: [ ]
+
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: affinity
+                operator: In
+                values:
+                  - web
+          topologyKey: "kubernetes.io/hostname"
+
+cache:
+  enabled: true
+  profiles: prod
+  minRole: ROLE_ANONYMOUS
+  defaultRole: ROLE_ANONYMOUS
+  allowUserTagHeader: false
+  allowUserRoleHeader: false
+  allowAuthHeaders: false
+  maxRequests: ""
+  maxConcurrentRequests: ""
+  maxRequestsOrigin: ""
+  heap: 512m
+  livenessTimeout: 5
+  csp: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  resources: { }
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
   nodeSelector: { }
 

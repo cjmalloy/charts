@@ -1,13 +1,13 @@
-{{- if .Values.workload.origins }}
+{{- if .Values.cache.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "jasper.fullname" . }}-workload
+  name: {{ include "jasper.fullname" . }}-cache
   labels:
     {{- include "jasper.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "jasper.fullname" . }}-workload-headless
-  replicas: {{ len .Values.workload.origins }}
+  serviceName: {{ include "jasper.fullname" . }}-cache-headless
+  replicas: 1
   selector:
     matchLabels:
       {{- include "jasper.selectorLabels" . | nindent 6 }}
@@ -29,7 +29,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: workload
+        - name: cache
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -42,9 +42,9 @@ spec:
             - name: SERVER_PORT
               value: "8081"
             - name: JASPER_HEAP
-              value: {{ .Values.workload.heap }}
+              value: {{ .Values.cache.heap }}
             - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.workload.profiles }}
+              value: {{ .Values.cache.profiles }}
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://{{ .Values.postgresql.fullnameOverride }}:5432/{{ .Values.postgresql.auth.database }}
             - name: SPRING_DATASOURCE_USERNAME
@@ -58,33 +58,28 @@ spec:
               value: {{ .Values.config.redis }}
             - name: SPRING_DATA_REDIS_HOST
               value: {{ .Values.config.redis }}
-            - name: JASPER_WORKLOAD
-              value: {{ join "," .Values.workload.origins | quote }}
-            - name: JASPER_WORKER
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
             - name: JASPER_CACHE_API
-              {{- if .Values.cache.enabled }}
               value: http://{{ include "jasper.fullname" . }}-cache
-              {{- else }}
-              value: http://{{ include "jasper.fullname" . }}
-              {{- end }}
             - name: JASPER_MIN_ROLE
-              value: {{ .Values.workload.minRole }}
+              value: {{ .Values.cache.minRole }}
             - name: JASPER_ALLOW_USER_TAG_HEADER
-              value: {{ .Values.workload.allowUserTagHeader | quote }}
+              value: {{ .Values.cache.allowUserTagHeader | quote }}
             - name: JASPER_ALLOW_USER_ROLE_HEADER
-              value: {{ .Values.workload.allowUserRoleHeader | quote }}
+              value: {{ .Values.cache.allowUserRoleHeader | quote }}
             - name: JASPER_ALLOW_AUTH_HEADERS
-              value: {{ .Values.workload.allowAuthHeaders | quote }}
-            - name: JASPER_SSH_CONFIG_NAMESPACE
-              value: {{ .Values.workload.sshConfigNamespace | quote }}
-            - name: JASPER_SSH_CONFIG_MAP_NAME
-              value: {{ .Values.workload.sshConfigMapName | quote }}
+              value: {{ .Values.cache.allowAuthHeaders | quote }}
+            - name: JASPER_SECURITY_CONTENT_SECURITY_POLICY
+              value: {{ .Values.cache.csp | quote }}
+            - name: JASPER_OVERRIDE_SECURITY_MAX_REQUESTS
+              value: {{ .Values.cache.maxRequestsOrigin | quote }}
+            - name: JASPER_OVERRIDE_SERVER_MAX_REQUESTS
+              value: {{ .Values.cache.maxRequests | quote }}
+            - name: JASPER_OVERRIDE_SERVER_MAX_CONCURRENT_REQUESTS
+              value: {{ .Values.cache.maxConcurrentRequests | quote }}
           livenessProbe:
             initialDelaySeconds: 120
             failureThreshold: 10
+            timeoutSeconds: {{ .Values.cache.livenessTimeout }}
             httpGet:
               path: /management/health/liveness
               port: 8081
@@ -94,24 +89,17 @@ spec:
               path: /management/health/readiness
               port: 8081
           resources:
-            {{- toYaml .Values.workload.resources | nindent 12 }}
-      {{- with .Values.workload.nodeSelector }}
+            {{- toYaml .Values.cache.resources | nindent 12 }}
+      {{- with .Values.cache.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.workload.affinity }}
+      {{- with .Values.cache.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.workload.tolerations }}
+      {{- with .Values.cache.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "jasper.fullname" . }}-workload-headless
-spec:
-  clusterIP: None
-{{- end -}}
+{{- end }}
