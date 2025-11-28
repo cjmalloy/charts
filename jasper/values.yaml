@@ -324,13 +324,4 @@ cache:
 
   tolerations: [ ]
 
-  affinity:
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-              - key: affinity
-                operator: In
-                values:
-                  - web
-          topologyKey: "kubernetes.io/hostname"
+  affinity: { }
