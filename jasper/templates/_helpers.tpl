@@ -51,11 +51,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 {{- define "jasper.workload.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "jasper.name" . }}-workload
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ .Release.Name }}-workload
 {{- end }}
 {{- define "jasper.cache.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "jasper.name" . }}-cache
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ .Release.Name }}-cache
 {{- end }}
 
 {{/*
