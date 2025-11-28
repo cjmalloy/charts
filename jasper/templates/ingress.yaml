@@ -48,7 +48,7 @@ spec:
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
-          {{- if and .Values.cache.enabled .Values.cache.ingress.enabled -}}
+          {{- if $.Values.cache.enabled -}}
           - path: {{ .path }}/v1/proxy
             pathType: {{ .pathType }}
             backend:

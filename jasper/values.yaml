@@ -300,10 +300,6 @@ cache:
   livenessTimeout: 5
   csp: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
 
-  ingress:
-    enabled: true
-    annotations: { }
-
   service:
     type: ClusterIP
     port: 80
