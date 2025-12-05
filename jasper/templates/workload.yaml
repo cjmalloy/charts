@@ -18,7 +18,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        affinity: worker
         {{- include "jasper.workload.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}

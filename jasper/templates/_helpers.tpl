@@ -53,6 +53,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/name: {{ include "jasper.name" . }}-workload
 app.kubernetes.io/instance: {{ .Release.Name }}-workload
 {{- end }}
+{{- define "jasper.ssh.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "jasper.name" . }}-ssh
+app.kubernetes.io/instance: {{ .Release.Name }}-ssh
+{{- end }}
 {{- define "jasper.cache.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "jasper.name" . }}-cache
 app.kubernetes.io/instance: {{ .Release.Name }}-cache

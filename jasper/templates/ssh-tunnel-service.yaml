@@ -13,6 +13,5 @@ spec:
       protocol: TCP
       name: ssh
   selector:
-    affinity: ssh
-    {{- include "jasper.selectorLabels" . | nindent 4 }}
+    {{- include "jasper.ssh.selectorLabels" . | nindent 4 }}
 {{ end }}

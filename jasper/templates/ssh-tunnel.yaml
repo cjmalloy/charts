@@ -11,7 +11,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "jasper.selectorLabels" . | nindent 6 }}
+      {{- include "jasper.ssh.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.sshTunnel.podAnnotations }}
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "jasper.selectorLabels" . | nindent 8 }}
+        {{- include "jasper.ssh.selectorLabels" . | nindent 8 }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.sshTunnel.terminationGracePeriodSeconds }}
       {{- with .Values.sshTunnel.imagePullSecrets }}
