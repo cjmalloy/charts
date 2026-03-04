@@ -1,0 +1,44 @@
+name: Bump Jasper Chart Version
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  version-bump:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Check for Jasper Changes
+        id: check_files
+        run: |
+          # Check if any files in /jasper were modified across the PR range
+          git fetch origin "${{ github.base_ref }}"
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep -q "^jasper/"; then
+            echo "match=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump Helm Chart Version
+        if: steps.check_files.outputs.match == 'true'
+        run: |
+          # Target only the jasper chart
+          yq eval '.version |= (split(".") | .[-1] |= ((. tag = "!!int") + 1) | join("."))' -i jasper/Chart.yaml
+
+      - name: Commit and Push
+        if: steps.check_files.outputs.match == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if [[ -n "$(git status --porcelain jasper/Chart.yaml)" ]]; then
+            git add jasper/Chart.yaml
+            git commit -m "chore(jasper): bump chart version [skip ci]"
+            git push
+          fi
