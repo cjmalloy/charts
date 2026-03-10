@@ -45,6 +45,8 @@ config:
   cspScriptSrc: ""
   cspStyleSrc: ""
   cspConnectSrc: ""
+  cspImageSrc: ""
+  cspFontSrc: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

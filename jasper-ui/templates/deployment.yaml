@@ -86,6 +86,10 @@ spec:
               value: {{ .Values.config.cspStyleSrc | quote }}
             - name: CSP_CONNECT_SRC
               value: {{ .Values.config.cspConnectSrc | quote }}
+            - name: CSP_IMAGE_SRC
+              value: {{ .Values.config.cspImageSrc | quote }}
+            - name: CSP_FONT_SRC
+              value: {{ .Values.config.cspFontSrc | quote }}
           livenessProbe:
             httpGet:
               path: /
