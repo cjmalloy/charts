@@ -45,7 +45,7 @@ config:
   cspScriptSrc: ""
   cspStyleSrc: ""
   cspConnectSrc: ""
-  cspImageSrc: ""
+  cspImgSrc: ""
   cspFontSrc: ""
 
 serviceAccount:
