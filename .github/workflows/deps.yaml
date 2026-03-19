@@ -39,6 +39,6 @@ jobs:
           
           if [[ -n "$(git status --porcelain jasper/Chart.yaml)" ]]; then
             git add jasper/Chart.yaml
-            git commit -m "chore(jasper): bump chart version [skip ci]"
+            git commit -m "chore(jasper): bump chart version"
             git push
           fi
