@@ -14,12 +14,17 @@ spec:
       {{- include "jasper.ssh.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.sshTunnel.podAnnotations }}
+      {{- if or .Values.sshTunnel.podAnnotations .Values.sshTunnel.authorizedKeysConfigMap }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+      {{- with .Values.sshTunnel.podAnnotations }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
+        checksum/authorized-keys-config-map: {{ printf "%s:%s" .Values.sshTunnel.authorizedKeysConfigMap (toJson (dig "data" (dict) (lookup "v1" "ConfigMap" .Release.Namespace .Values.sshTunnel.authorizedKeysConfigMap))) | sha256sum }}
+      {{- end }}
       {{- end }}
       labels:
-        {{- include "jasper.ssh.selectorLabels" . | nindent 8 }}
+      {{- include "jasper.ssh.selectorLabels" . | nindent 8 }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.sshTunnel.terminationGracePeriodSeconds }}
       {{- with .Values.sshTunnel.imagePullSecrets }}
