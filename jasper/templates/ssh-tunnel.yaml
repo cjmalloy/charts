@@ -20,7 +20,7 @@ spec:
       {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
-      checksum/authorized-keys-config-map: {{ printf "%s:%s" .Values.sshTunnel.authorizedKeysConfigMap (toJson (lookup "v1" "ConfigMap" .Release.Namespace .Values.sshTunnel.authorizedKeysConfigMap)) | sha256sum }}
+        checksum/authorized-keys-config-map: {{ printf "%s:%s" .Values.sshTunnel.authorizedKeysConfigMap (toJson (lookup "v1" "ConfigMap" .Release.Namespace .Values.sshTunnel.authorizedKeysConfigMap)) | sha256sum }}
       {{- end }}
       {{- end }}
       labels:
