@@ -1,0 +1,114 @@
+{{- if and .Values.sshTunnel.enabled .Values.sshTunnel.authorizedKeysConfigMap .Values.sshTunnel.controller.enabled }}
+{{- $name := printf "%s-ssh-controller" (include "jasper.fullname" .) }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames:
+      - {{ .Values.sshTunnel.authorizedKeysConfigMap | quote }}
+    verbs: ["get"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames:
+      - {{ printf "%s-ssh-tunnel" (include "jasper.fullname" .) | quote }}
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $name }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ $name }}
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "jasper.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "jasper.sshController.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.sshTunnel.controller.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "jasper.sshController.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ $name }}
+      {{- with .Values.sshTunnel.controller.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.sshTunnel.controller.podSecurityContext | nindent 8 }}
+      containers:
+        - name: controller
+          image: "{{ .Values.sshTunnel.controller.image.repository }}:{{ default .Values.sshTunnel.image.tag .Values.sshTunnel.controller.image.tag }}"
+          imagePullPolicy: {{ .Values.sshTunnel.controller.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.sshTunnel.controller.securityContext | nindent 12 }}
+          env:
+            - name: NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+            - name: AUTHORIZED_KEYS_CONFIGMAP_NAME
+              value: {{ .Values.sshTunnel.authorizedKeysConfigMap | quote }}
+            - name: SSH_DEPLOYMENT_NAME
+              value: {{ printf "%s-ssh-tunnel" (include "jasper.fullname" .) | quote }}
+            - name: ROLLOUT_DELAY
+              value: {{ .Values.sshTunnel.controller.rolloutDelay | quote }}
+          ports:
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: health
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+          resources:
+            {{- toYaml .Values.sshTunnel.controller.resources | nindent 12 }}
+      {{- with .Values.sshTunnel.controller.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sshTunnel.controller.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sshTunnel.controller.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

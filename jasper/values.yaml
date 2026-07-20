@@ -246,6 +246,32 @@ sshTunnel:
 
   affinity: { }
 
+  controller:
+    enabled: true
+
+    image:
+      repository: ghcr.io/cjmalloy/jasper-ssh-controller
+      pullPolicy: IfNotPresent
+      tag: ""
+
+    rolloutDelay: 0s
+
+    imagePullSecrets: [ ]
+
+    podAnnotations: { }
+
+    podSecurityContext: { }
+
+    securityContext: { }
+
+    resources: { }
+
+    nodeSelector: { }
+
+    tolerations: [ ]
+
+    affinity: { }
+
 workload:
   origins: []
   profiles: prod
