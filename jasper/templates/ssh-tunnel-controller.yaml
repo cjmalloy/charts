@@ -72,7 +72,7 @@ spec:
         {{- toYaml .Values.sshTunnel.controller.podSecurityContext | nindent 8 }}
       containers:
         - name: controller
-          image: "{{ .Values.sshTunnel.controller.image.repository }}:{{ default .Values.sshTunnel.image.tag .Values.sshTunnel.controller.image.tag }}"
+          image: "{{ .Values.sshTunnel.controller.image.repository }}:{{ .Values.sshTunnel.controller.image.tag }}"
           imagePullPolicy: {{ .Values.sshTunnel.controller.image.pullPolicy }}
           securityContext:
             {{- toYaml .Values.sshTunnel.controller.securityContext | nindent 12 }}
