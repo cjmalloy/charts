@@ -186,7 +186,7 @@ sshTunnel:
   image:
     repository: ghcr.io/cjmalloy/jasper-ssh
     pullPolicy: IfNotPresent
-    tag: 1.1.18
+    tag: 1.1.19
 
   localOrigin: ""
   userTag: ""
@@ -245,6 +245,32 @@ sshTunnel:
   tolerations: [ ]
 
   affinity: { }
+
+  controller:
+    enabled: true
+
+    image:
+      repository: ghcr.io/cjmalloy/jasper-ssh-controller
+      pullPolicy: IfNotPresent
+      tag: 1.1.19
+
+    rolloutDelay: 0s
+
+    imagePullSecrets: [ ]
+
+    podAnnotations: { }
+
+    podSecurityContext: { }
+
+    securityContext: { }
+
+    resources: { }
+
+    nodeSelector: { }
+
+    tolerations: [ ]
+
+    affinity: { }
 
 workload:
   origins: []
