@@ -58,8 +58,8 @@ app.kubernetes.io/name: {{ include "jasper.name" . }}-ssh
 app.kubernetes.io/instance: {{ .Release.Name }}-ssh
 {{- end }}
 {{- define "jasper.sshController.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "jasper.name" . }}-ssh-controller
-app.kubernetes.io/instance: {{ .Release.Name }}-ssh-controller
+app.kubernetes.io/name: {{ printf "%s-ssh-controller" (include "jasper.name" .) | trunc 63 | trimSuffix "-" }}
+app.kubernetes.io/instance: {{ printf "%s-ssh-controller" .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- define "jasper.cache.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "jasper.name" . }}-cache
