@@ -16,12 +16,9 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["configmaps"]
-    verbs: ["list", "watch"]
-  - apiGroups: [""]
-    resources: ["configmaps"]
     resourceNames:
       - {{ .Values.sshTunnel.authorizedKeysConfigMap | quote }}
-    verbs: ["get"]
+    verbs: ["get", "list", "watch"]
   - apiGroups: ["apps"]
     resources: ["deployments"]
     resourceNames:
