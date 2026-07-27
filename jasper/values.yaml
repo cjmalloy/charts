@@ -252,7 +252,7 @@ sshTunnel:
     image:
       repository: ghcr.io/cjmalloy/jasper-ssh-controller
       pullPolicy: IfNotPresent
-      tag: 1.1.19
+      tag: 1.2.0
 
     rolloutDelay: 0s
 
