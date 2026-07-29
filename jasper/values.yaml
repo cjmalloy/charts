@@ -199,6 +199,7 @@ sshTunnel:
   authorizedKeysConfigMap: ""
   hostKey: ""
   hostKeySecret: ""
+  configChangeMode: drain
 
   terminationGracePeriodSeconds: 60
 

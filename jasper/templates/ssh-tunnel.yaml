@@ -38,6 +38,8 @@ spec:
               containerPort: 22
               protocol: TCP
           env:
+            - name: CONFIG_CHANGE_MODE
+              value: {{ .Values.sshTunnel.configChangeMode | quote }}
             - name: UPSTREAM
               value: http://{{ default (include "jasper.fullname" .) .Values.sshTunnel.api }}
             - name: FALLBACK
