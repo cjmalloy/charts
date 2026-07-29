@@ -6,7 +6,7 @@ on:
 jobs:
   version-bump:
     if: github.actor == 'dependabot[bot]'
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
