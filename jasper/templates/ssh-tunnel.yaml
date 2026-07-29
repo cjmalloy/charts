@@ -6,6 +6,8 @@ metadata:
   labels:
     {{- include "jasper.labels" . | nindent 4 }}
 spec:
+  strategy:
+    {{- toYaml .Values.sshTunnel.strategy | nindent 4 }}
   {{- if not .Values.sshTunnel.autoscaling.enabled }}
   replicas: {{ .Values.sshTunnel.replicaCount }}
   {{- end }}
