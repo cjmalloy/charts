@@ -57,6 +57,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}-workload
 app.kubernetes.io/name: {{ include "jasper.name" . }}-ssh
 app.kubernetes.io/instance: {{ .Release.Name }}-ssh
 {{- end }}
+{{/*
+Create the name of the SSH service account.
+*/}}
+{{- define "jasper.ssh.serviceAccountName" -}}
+{{- printf "%s-ssh" (include "jasper.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- define "jasper.sshController.selectorLabels" -}}
 app.kubernetes.io/name: {{ printf "%s-ssh-controller" (include "jasper.name" .) | trunc 63 | trimSuffix "-" }}
 app.kubernetes.io/instance: {{ printf "%s-ssh-controller" .Release.Name | trunc 63 | trimSuffix "-" }}
