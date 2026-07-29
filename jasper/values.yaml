@@ -207,7 +207,7 @@ sshTunnel:
   hostKeySecret: ""
   configChangeMode: drain
 
-  terminationGracePeriodSeconds: 60
+  terminationGracePeriodSeconds: 604800
 
   imagePullSecrets: [ ]
 

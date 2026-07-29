@@ -84,6 +84,11 @@ spec:
             exec:
               command:
               - /healthcheck.sh
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /shutdown.sh
       {{- with .Values.sshTunnel.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
