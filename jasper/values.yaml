@@ -199,6 +199,7 @@ sshTunnel:
   authorizedKeysConfigMap: ""
   hostKey: ""
   hostKeySecret: ""
+  configChangeMode: drain
 
   terminationGracePeriodSeconds: 60
 
@@ -248,7 +249,6 @@ sshTunnel:
 
   controller:
     enabled: true
-    configChangeMode: drain
 
     image:
       repository: ghcr.io/cjmalloy/jasper-ssh-controller
