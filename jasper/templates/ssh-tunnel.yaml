@@ -39,7 +39,7 @@ spec:
               protocol: TCP
           env:
             - name: CONFIG_CHANGE_MODE
-              value: {{ default "drain" .Values.sshTunnel.configChangeMode | quote }}
+              value: {{ .Values.sshTunnel.configChangeMode | quote }}
             - name: UPSTREAM
               value: http://{{ default (include "jasper.fullname" .) .Values.sshTunnel.api }}
             - name: FALLBACK
