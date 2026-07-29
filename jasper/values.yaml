@@ -183,6 +183,12 @@ sshTunnel:
 
   replicaCount: 2
 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 20
+
   image:
     repository: ghcr.io/cjmalloy/jasper-ssh
     pullPolicy: IfNotPresent
@@ -201,7 +207,7 @@ sshTunnel:
   hostKeySecret: ""
   configChangeMode: drain
 
-  terminationGracePeriodSeconds: 60
+  terminationGracePeriodSeconds: 604800
 
   imagePullSecrets: [ ]
 
