@@ -61,7 +61,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}-ssh
 Create the name of the SSH service account.
 */}}
 {{- define "jasper.ssh.serviceAccountName" -}}
-{{- printf "%s-ssh" (include "jasper.fullname" .) | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-ssh" (include "jasper.fullname" . | trunc 59 | trimSuffix "-") }}
 {{- end }}
 {{- define "jasper.sshController.selectorLabels" -}}
 app.kubernetes.io/name: {{ printf "%s-ssh-controller" (include "jasper.name" .) | trunc 63 | trimSuffix "-" }}
