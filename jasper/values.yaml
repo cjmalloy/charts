@@ -248,6 +248,7 @@ sshTunnel:
 
   controller:
     enabled: true
+    configChangeMode: drain
 
     image:
       repository: ghcr.io/cjmalloy/jasper-ssh-controller
