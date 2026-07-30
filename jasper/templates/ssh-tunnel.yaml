@@ -28,7 +28,11 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
+      serviceAccountName: {{ include "jasper.ssh.serviceAccountName" . }}
+      {{- else }}
       serviceAccountName: {{ include "jasper.serviceAccountName" . }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.sshTunnel.podSecurityContext | nindent 8 }}
       containers:
@@ -40,6 +44,12 @@ spec:
               containerPort: 22
               protocol: TCP
           env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: AUTHORIZED_KEYS_CONFIGMAP_NAME
+              value: {{ .Values.sshTunnel.authorizedKeysConfigMap | quote }}
             - name: CONFIG_CHANGE_MODE
               value: {{ .Values.sshTunnel.configChangeMode | quote }}
             - name: UPSTREAM
