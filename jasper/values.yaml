@@ -192,7 +192,7 @@ sshTunnel:
   image:
     repository: ghcr.io/cjmalloy/jasper-ssh
     pullPolicy: IfNotPresent
-    tag: v1.2.2
+    tag: v1.2.4
 
   localOrigin: ""
   userTag: ""
@@ -259,7 +259,7 @@ sshTunnel:
     image:
       repository: ghcr.io/cjmalloy/jasper-ssh-controller
       pullPolicy: IfNotPresent
-      tag: v1.2.2
+      tag: v1.2.4
 
     rolloutDelay: 0s
 
