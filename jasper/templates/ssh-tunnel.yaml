@@ -28,7 +28,11 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if .Values.sshTunnel.authorizedKeysConfigMap }}
+      serviceAccountName: {{ include "jasper.ssh.serviceAccountName" . }}
+      {{- else }}
       serviceAccountName: {{ include "jasper.serviceAccountName" . }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.sshTunnel.podSecurityContext | nindent 8 }}
       containers:
