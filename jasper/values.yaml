@@ -23,6 +23,7 @@ config:
   maxConcurrentRequests: ""
   maxRequestsOrigin: ""
   heap: 512m
+  gc: g1gc
   livenessTimeout: 5
   csp: "default-src 'self'; frame-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
   override:
@@ -290,6 +291,7 @@ workload:
   sshConfigNamespace: "default"
   sshConfigMapName: "ssh-authorized-keys"
   heap: 512m
+  gc: parallel
 
   resources: { }
     # We usually recommend not to specify default resources and to leave this as a conscious
