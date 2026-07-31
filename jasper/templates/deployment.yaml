@@ -42,6 +42,8 @@ spec:
               value: "8081"
             - name: JASPER_HEAP
               value: {{ .Values.config.heap }}
+            - name: JASPER_GC
+              value: {{ .Values.config.gc }}
             - name: SPRING_PROFILES_ACTIVE
               value: {{ .Values.config.profiles }}
             - name: SPRING_DATASOURCE_URL
