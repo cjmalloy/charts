@@ -1,0 +1,101 @@
+{{- if .Values.postgresql.enabled }}
+{{- $fullname := include "jasper.postgresql.fullname" . }}
+{{- $pg := .Values.postgresql }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}-config
+  labels:
+    {{- include "jasper.postgresql.labels" . | nindent 4 }}
+data:
+  postgresql.conf: |
+    listen_addresses = '*'
+    port = 5432
+    {{- with $pg.primary.extendedConfiguration }}
+    {{- . | nindent 4 }}
+    {{- end }}
+  pg_hba.conf: |
+    {{- $pg.primary.pgHbaConfiguration | nindent 4 }}
+  upgrade-dump.sh: |
+    #!/bin/bash
+    # Runs with the old PostgreSQL image: dump the existing database if it matches this major version.
+    set -Eeuo pipefail
+    WORK=/pgdata/upgrade
+    mkdir -p "$WORK"
+    if [ -f "$WORK/dump.sql" ]; then
+      echo "Using existing dump $WORK/dump.sql"
+      exit 0
+    fi
+    if [ ! -s "$PGDATA/PG_VERSION" ]; then
+      echo "No existing database, nothing to dump"
+      exit 0
+    fi
+    version="$(cat "$PGDATA/PG_VERSION")"
+    if [ "$version" != "$PG_MAJOR" ]; then
+      echo "Database is PostgreSQL $version, not $PG_MAJOR, nothing to dump"
+      exit 0
+    fi
+    echo "Dumping PostgreSQL $version database"
+    chmod 700 "$PGDATA"
+    pg_ctl -D "$PGDATA" -w -t 3600 \
+      -o "-c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf -c listen_addresses=''" \
+      start
+    pg_dumpall --username=postgres --no-password --file="$WORK/dump.sql.tmp"
+    pg_ctl -D "$PGDATA" -m fast -w -t 3600 stop
+    mv "$WORK/dump.sql.tmp" "$WORK/dump.sql"
+    echo "Dump complete"
+  upgrade-restore.sh: |
+    #!/bin/bash
+    # Runs with the new PostgreSQL image: restore the dump into a new data directory and swap it in.
+    source /usr/local/bin/docker-entrypoint.sh
+    set -Eeo pipefail
+    WORK=/pgdata/upgrade
+    DATA="$PGDATA"
+    NEW="$WORK/data-new"
+    finish() {
+      local old backup
+      old="$(cat "$WORK/old-version")"
+      backup="$WORK/data-$old-$(date +%Y%m%d%H%M%S)"
+      if [ -e "$DATA" ]; then
+        mv "$DATA" "$backup"
+      fi
+      mv "$NEW" "$DATA"
+      mv "$WORK/dump.sql" "$backup.sql"
+      rm -f "$WORK/old-version" "$WORK/restore-complete"
+      echo "Upgrade from PostgreSQL $old to $PG_MAJOR complete."
+      echo "The old data directory and dump were kept in $WORK and can be deleted once verified."
+    }
+    if [ -f "$WORK/restore-complete" ]; then
+      finish
+      exit 0
+    fi
+    if [ ! -f "$WORK/dump.sql" ]; then
+      if [ -s "$DATA/PG_VERSION" ] && [ "$(cat "$DATA/PG_VERSION")" != "$PG_MAJOR" ]; then
+        echo "Error: database is PostgreSQL $(cat "$DATA/PG_VERSION") but postgresql.image is PostgreSQL $PG_MAJOR." >&2
+        echo "Set postgresql.upgrade.image to a PostgreSQL $(cat "$DATA/PG_VERSION") image to upgrade." >&2
+        exit 1
+      fi
+      echo "Nothing to upgrade"
+      exit 0
+    fi
+    old="$(cat "$DATA/PG_VERSION")"
+    if [ "$old" = "$PG_MAJOR" ]; then
+      echo "Database is already PostgreSQL $PG_MAJOR, nothing to upgrade"
+      rm -f "$WORK/dump.sql"
+      exit 0
+    fi
+    echo "Restoring PostgreSQL $old dump into PostgreSQL $PG_MAJOR"
+    echo "$old" > "$WORK/old-version"
+    rm -rf "$NEW"
+    export PGDATA="$NEW"
+    docker_setup_env
+    docker_create_db_directories
+    docker_init_database_dir
+    docker_temp_server_start -c config_file=/etc/postgresql/postgresql.conf -c hba_file=/etc/postgresql/pg_hba.conf
+    # The superuser already exists in the new cluster
+    grep -vxF -e 'CREATE ROLE postgres;' "$WORK/dump.sql" \
+      | psql -X -q -v ON_ERROR_STOP=1 --username=postgres --no-password --dbname=postgres
+    docker_temp_server_stop
+    touch "$WORK/restore-complete"
+    finish
+{{- end }}

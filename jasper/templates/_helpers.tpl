@@ -82,3 +82,117 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Name of the built in PostgreSQL resources (StatefulSet, Service and Secret).
+*/}}
+{{- define "jasper.postgresql.fullname" -}}
+{{- default (printf "%s-db" (include "jasper.fullname" .)) .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+PostgreSQL selector labels. These match the labels used by the Bitnami subchart previously
+bundled with this chart so the existing StatefulSet can be updated in place.
+*/}}
+{{- define "jasper.postgresql.selectorLabels" -}}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: postgresql
+app.kubernetes.io/component: primary
+{{- end }}
+
+{{- define "jasper.postgresql.labels" -}}
+helm.sh/chart: {{ include "jasper.chart" . }}
+{{ include "jasper.postgresql.selectorLabels" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Secret and key holding the database password used by Jasper.
+*/}}
+{{- define "jasper.database.secretName" -}}
+{{- if .Values.postgresql.enabled }}
+{{- default (include "jasper.postgresql.fullname" .) .Values.postgresql.auth.existingSecret }}
+{{- else }}
+{{- default (printf "%s-external-db" (include "jasper.fullname" .)) .Values.externalDatabase.existingSecret }}
+{{- end }}
+{{- end }}
+
+{{- define "jasper.database.secretKey" -}}
+{{- if .Values.postgresql.enabled }}
+{{- default "postgres-password" .Values.postgresql.auth.secretKeys.adminPasswordKey }}
+{{- else }}
+{{- default "password" .Values.externalDatabase.existingSecretPasswordKey }}
+{{- end }}
+{{- end }}
+
+{{/*
+Datasource environment variables for Jasper containers.
+*/}}
+{{- define "jasper.database.env" -}}
+{{- if .Values.postgresql.enabled }}
+- name: SPRING_DATASOURCE_URL
+  value: jdbc:postgresql://{{ include "jasper.postgresql.fullname" . }}:5432/{{ .Values.postgresql.auth.database }}
+- name: SPRING_DATASOURCE_USERNAME
+  value: postgres
+- name: SPRING_DATASOURCE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "jasper.database.secretName" . }}
+      key: {{ include "jasper.database.secretKey" . }}
+{{- else }}
+{{- with .Values.externalDatabase }}
+- name: SPRING_DATASOURCE_URL
+  {{- if .jdbcUrl }}
+  value: {{ .jdbcUrl | quote }}
+  {{- else }}
+  value: {{ printf "jdbc:postgresql://%s:%v/%s" (required "externalDatabase.host or externalDatabase.jdbcUrl is required when postgresql.enabled=false" .host) .port .database | quote }}
+  {{- end }}
+- name: SPRING_DATASOURCE_USERNAME
+  value: {{ .username | quote }}
+{{- end }}
+{{- if or .Values.externalDatabase.password .Values.externalDatabase.existingSecret }}
+- name: SPRING_DATASOURCE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "jasper.database.secretName" . }}
+      key: {{ include "jasper.database.secretKey" . }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "jasper.postgresql.env" -}}
+- name: PGDATA
+  value: /pgdata/data
+- name: POSTGRES_USER
+  value: postgres
+- name: POSTGRES_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "jasper.database.secretName" . }}
+      key: {{ include "jasper.database.secretKey" . }}
+- name: POSTGRES_DB
+  value: {{ .Values.postgresql.auth.database | quote }}
+{{- with .Values.postgresql.initdbArgs }}
+- name: POSTGRES_INITDB_ARGS
+  value: {{ . | quote }}
+{{- end }}
+{{- end }}
+
+{{/*
+The data volume is not mounted under /var/lib/postgresql since the postgres images declare
+a VOLUME there (/var/lib/postgresql/data before 18) which would hide the data directory.
+*/}}
+{{- define "jasper.postgresql.volumeMounts" -}}
+- name: data
+  mountPath: /pgdata
+- name: config
+  mountPath: /etc/postgresql
+- name: empty-dir
+  mountPath: /tmp
+  subPath: tmp
+- name: empty-dir
+  mountPath: /var/run/postgresql
+  subPath: run
+- name: dshm
+  mountPath: /dev/shm
+{{- end }}
