@@ -82,3 +82,10 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Name of the secret holding the PostgreSQL superuser password
+*/}}
+{{- define "jasper.postgresql.secretName" -}}
+{{- default (printf "%s-auth" .Values.postgresql.fullnameOverride) .Values.postgresql.auth.existingSecret }}
+{{- end }}

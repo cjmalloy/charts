@@ -53,8 +53,8 @@ spec:
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.postgresql.fullnameOverride }}
-                  key: postgres-password
+                  name: {{ include "jasper.postgresql.secretName" . }}
+                  key: {{ .Values.postgresql.auth.existingSecretPostgresPasswordKey | default "postgres-password" }}
             - name: SPRING_REDIS_HOST
               value: {{ .Values.config.redis }}
             - name: SPRING_DATA_REDIS_HOST
