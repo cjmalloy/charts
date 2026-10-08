@@ -51,18 +51,10 @@ smtp:
 
 postgresql:
   fullnameOverride: jasper-db
-  image:
-    repository: bitnamilegacy/postgresql
-  metrics:
-    image:
-      repository: bitnamilegacy/postgres-exporter
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
   auth:
     database: jasper
-  primary:
-    extendedConfiguration: |-
+  config:
+    postgresql: |-
       default_text_search_config = 'pg_catalog.english'
 
 imagePullSecrets: []
