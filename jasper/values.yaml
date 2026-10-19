@@ -68,6 +68,7 @@ postgresql:
     # Use an existing secret for the "postgres" superuser password
     existingSecret: ""
     secretKeys:
+      # Key in existingSecret holding the password
       adminPasswordKey: postgres-password
   # Extra arguments for initdb when the database is first created
   initdbArgs: ""

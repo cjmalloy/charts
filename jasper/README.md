@@ -55,16 +55,27 @@ externalDatabase:
 Version 2.0.0 replaces the Bitnami PostgreSQL subchart with the official `postgres` image.
 Data from 1.x cannot be reused in place, so migrate it with a dump and restore:
 
-1. Back up the database from the old pod:
+1. Back up the database from the old pod, and note the old `postgres` password:
    ```sh
    kubectl exec jasper-db-0 -- bash -c 'PGPASSWORD="$(cat /opt/bitnami/postgresql/secrets/postgres-password)" pg_dumpall -U postgres' > dump.sql
+   kubectl exec jasper-db-0 -- cat /opt/bitnami/postgresql/secrets/postgres-password
    ```
-2. Install chart 2.0.0 as a fresh install, a new release, or in a new cluster.
+2. Install chart 2.0.0 as a fresh install, a new release, or in a new cluster. Set the
+   password to the old one, because the dump restores it with `ALTER ROLE`. Keep Jasper
+   stopped so its startup migrations don't create the schema before the restore:
+   ```sh
+   helm install jasper jasper/jasper \
+     --set postgresql.auth.postgresPassword=<old password> \
+     --set replicaCount=0 --set autoscaling.enabled=false \
+     --set cache.enabled=false --set workload.origins=null
+   ```
 3. Restore the dump into the new database (the pod is named `<fullname>-postgresql-0`):
    ```sh
    kubectl exec -i jasper-postgresql-0 -- psql -U postgres < dump.sql
    ```
    Errors that `role "postgres"` and `database "jasper"` already exist are expected and can be ignored.
+4. Once the restore succeeds, start Jasper again with `helm upgrade` using your normal values
+   (keep `postgresql.auth.postgresPassword` set to the old password).
 
 ### Major PostgreSQL upgrades
 

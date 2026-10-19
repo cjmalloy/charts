@@ -85,14 +85,15 @@ Create the name of the service account to use
 
 {{/*
 Name of the built in PostgreSQL resources (StatefulSet, Service and Secret).
+Truncated to 60 chars to leave room for the "-hl" headless Service suffix.
 */}}
 {{- define "jasper.postgresql.fullname" -}}
-{{- default (printf "%s-postgresql" (include "jasper.fullname" . | trunc 52 | trimSuffix "-")) .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- default (printf "%s-postgresql" (include "jasper.fullname" . | trunc 49 | trimSuffix "-")) .Values.postgresql.fullnameOverride | trunc 60 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "jasper.postgresql.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "jasper.name" . }}-postgresql
-app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
+app.kubernetes.io/name: {{ printf "%s-postgresql" (include "jasper.name" .) | trunc 63 | trimSuffix "-" }}
+app.kubernetes.io/instance: {{ printf "%s-postgresql" .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{- define "jasper.postgresql.labels" -}}
@@ -114,7 +115,11 @@ Secret and key holding the database password used by Jasper.
 
 {{- define "jasper.database.secretKey" -}}
 {{- if .Values.postgresql.enabled }}
+{{- if .Values.postgresql.auth.existingSecret }}
 {{- default "postgres-password" .Values.postgresql.auth.secretKeys.adminPasswordKey }}
+{{- else }}
+{{- print "postgres-password" }}
+{{- end }}
 {{- else }}
 {{- default "password" .Values.externalDatabase.existingSecretPasswordKey }}
 {{- end }}
