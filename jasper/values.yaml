@@ -87,6 +87,21 @@ postgresql:
     annotations: {}
     labels: {}
     selector: {}
+  # Probe timings, all run pg_isready. Set a probe to null to disable it.
+  # The startup probe gives initialization and crash recovery time to finish
+  # before the liveness probe starts.
+  startupProbe:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 60
+  livenessProbe:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
   podAnnotations: {}
   podSecurityContext: {}
   securityContext: {}
