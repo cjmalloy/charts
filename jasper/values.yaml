@@ -49,21 +49,79 @@ smtp:
   origin: ""
   headers: ""
 
+## Built in PostgreSQL database using the official postgres image from Docker Hub.
+## Set postgresql.enabled=false and configure externalDatabase to use an existing database.
 postgresql:
-  fullnameOverride: jasper-db
+  enabled: true
+  # Name of the StatefulSet, Service and Secret. Defaults to "<fullname>-postgresql".
+  fullnameOverride: ""
   image:
-    repository: bitnamilegacy/postgresql
-  metrics:
-    image:
-      repository: bitnamilegacy/postgres-exporter
-  volumePermissions:
-    image:
-      repository: bitnamilegacy/os-shell
+    # Use postgis/postgis (with a tag such as "18-3.6") for PostGIS support
+    repository: postgres
+    tag: "18.6"
+    pullPolicy: IfNotPresent
   auth:
     database: jasper
-  primary:
-    extendedConfiguration: |-
-      default_text_search_config = 'pg_catalog.english'
+    # Password for the "postgres" superuser. A random password is generated if empty.
+    # Only used when the database is first initialized.
+    postgresPassword: ""
+    # Use an existing secret for the "postgres" superuser password
+    existingSecret: ""
+    secretKeys:
+      # Key in existingSecret holding the password
+      adminPasswordKey: postgres-password
+  # Extra arguments for initdb when the database is first created
+  initdbArgs: ""
+  # PostgreSQL settings passed to the server as "-c key=value" arguments
+  config:
+    default_text_search_config: pg_catalog.english
+  persistence:
+    enabled: true
+    # Use an existing PVC instead of creating one
+    existingClaim: ""
+    # storageClass: "-"
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    annotations: {}
+    labels: {}
+    selector: {}
+  # Probe timings, all run pg_isready. Set a probe to null to disable it.
+  # The startup probe gives initialization and crash recovery time to finish
+  # before the liveness probe starts.
+  startupProbe:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 60
+  livenessProbe:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+## Existing database to use when postgresql.enabled=false
+externalDatabase:
+  host: ""
+  port: 5432
+  database: jasper
+  username: postgres
+  # Creates a secret with this password, ignored if existingSecret is set
+  password: ""
+  existingSecret: ""
+  existingSecretPasswordKey: password
+  # Overrides host, port and database
+  jdbcUrl: ""
 
 imagePullSecrets: []
 nameOverride: ""

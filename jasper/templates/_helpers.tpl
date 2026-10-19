@@ -82,3 +82,97 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Name of the built in PostgreSQL resources (StatefulSet, Service and Secret).
+Truncated to 60 chars to leave room for the "-hl" headless Service suffix.
+*/}}
+{{- define "jasper.postgresql.fullname" -}}
+{{- default (printf "%s-postgresql" (include "jasper.fullname" . | trunc 49 | trimSuffix "-")) .Values.postgresql.fullnameOverride | trunc 60 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "jasper.postgresql.selectorLabels" -}}
+app.kubernetes.io/name: {{ printf "%s-postgresql" (include "jasper.name" .) | trunc 63 | trimSuffix "-" }}
+app.kubernetes.io/instance: {{ printf "%s-postgresql" .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{- define "jasper.postgresql.labels" -}}
+helm.sh/chart: {{ include "jasper.chart" . }}
+{{ include "jasper.postgresql.selectorLabels" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Secret and key holding the database password used by Jasper.
+*/}}
+{{- define "jasper.database.secretName" -}}
+{{- if .Values.postgresql.enabled }}
+{{- default (include "jasper.postgresql.fullname" .) .Values.postgresql.auth.existingSecret }}
+{{- else }}
+{{- default (printf "%s-external-db" (include "jasper.fullname" .)) .Values.externalDatabase.existingSecret }}
+{{- end }}
+{{- end }}
+
+{{- define "jasper.database.secretKey" -}}
+{{- if .Values.postgresql.enabled }}
+{{- if .Values.postgresql.auth.existingSecret }}
+{{- default "postgres-password" .Values.postgresql.auth.secretKeys.adminPasswordKey }}
+{{- else }}
+{{- print "postgres-password" }}
+{{- end }}
+{{- else }}
+{{- default "password" .Values.externalDatabase.existingSecretPasswordKey }}
+{{- end }}
+{{- end }}
+
+{{/*
+Datasource environment variables for Jasper containers.
+*/}}
+{{- define "jasper.database.env" -}}
+{{- if .Values.postgresql.enabled }}
+- name: SPRING_DATASOURCE_URL
+  value: jdbc:postgresql://{{ include "jasper.postgresql.fullname" . }}:5432/{{ .Values.postgresql.auth.database }}
+- name: SPRING_DATASOURCE_USERNAME
+  value: postgres
+- name: SPRING_DATASOURCE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "jasper.database.secretName" . }}
+      key: {{ include "jasper.database.secretKey" . }}
+{{- else }}
+{{- with .Values.externalDatabase }}
+- name: SPRING_DATASOURCE_URL
+  {{- if .jdbcUrl }}
+  value: {{ .jdbcUrl | quote }}
+  {{- else }}
+  value: {{ printf "jdbc:postgresql://%s:%v/%s" (required "externalDatabase.host or externalDatabase.jdbcUrl is required when postgresql.enabled=false" .host) .port .database | quote }}
+  {{- end }}
+- name: SPRING_DATASOURCE_USERNAME
+  value: {{ .username | quote }}
+{{- end }}
+{{- if or .Values.externalDatabase.password .Values.externalDatabase.existingSecret }}
+- name: SPRING_DATASOURCE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "jasper.database.secretName" . }}
+      key: {{ include "jasper.database.secretKey" . }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "jasper.postgresql.env" -}}
+- name: POSTGRES_USER
+  value: postgres
+- name: POSTGRES_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ include "jasper.database.secretName" . }}
+      key: {{ include "jasper.database.secretKey" . }}
+- name: POSTGRES_DB
+  value: {{ .Values.postgresql.auth.database | quote }}
+{{- with .Values.postgresql.initdbArgs }}
+- name: POSTGRES_INITDB_ARGS
+  value: {{ . | quote }}
+{{- end }}
+{{- end }}
+
