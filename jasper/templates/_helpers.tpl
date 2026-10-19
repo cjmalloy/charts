@@ -87,17 +87,12 @@ Create the name of the service account to use
 Name of the built in PostgreSQL resources (StatefulSet, Service and Secret).
 */}}
 {{- define "jasper.postgresql.fullname" -}}
-{{- default (printf "%s-db" (include "jasper.fullname" .)) .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- default (printf "%s-postgresql" (include "jasper.fullname" . | trunc 52 | trimSuffix "-")) .Values.postgresql.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-PostgreSQL selector labels. These match the labels used by the Bitnami subchart previously
-bundled with this chart so the existing StatefulSet can be updated in place.
-*/}}
 {{- define "jasper.postgresql.selectorLabels" -}}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/name: postgresql
-app.kubernetes.io/component: primary
+app.kubernetes.io/name: {{ include "jasper.name" . }}-postgresql
+app.kubernetes.io/instance: {{ .Release.Name }}-postgresql
 {{- end }}
 
 {{- define "jasper.postgresql.labels" -}}
@@ -161,8 +156,6 @@ Datasource environment variables for Jasper containers.
 {{- end }}
 
 {{- define "jasper.postgresql.env" -}}
-- name: PGDATA
-  value: /pgdata/data
 - name: POSTGRES_USER
   value: postgres
 - name: POSTGRES_PASSWORD
@@ -178,21 +171,3 @@ Datasource environment variables for Jasper containers.
 {{- end }}
 {{- end }}
 
-{{/*
-The data volume is not mounted under /var/lib/postgresql since the postgres images declare
-a VOLUME there (/var/lib/postgresql/data before 18) which would hide the data directory.
-*/}}
-{{- define "jasper.postgresql.volumeMounts" -}}
-- name: data
-  mountPath: /pgdata
-- name: config
-  mountPath: /etc/postgresql
-- name: empty-dir
-  mountPath: /tmp
-  subPath: tmp
-- name: empty-dir
-  mountPath: /var/run/postgresql
-  subPath: run
-- name: dshm
-  mountPath: /dev/shm
-{{- end }}

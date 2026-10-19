@@ -16,10 +16,17 @@ postgresql:
   image:
     repository: postgis/postgis
     tag: "18-3.6"
-  upgrade:
-    image:
-      repository: postgis/postgis
-      tag: "17-3.5"
+```
+
+### Configuration
+
+PostgreSQL settings in `postgresql.config` are passed to the server as `-c key=value` arguments:
+
+```yaml
+postgresql:
+  config:
+    default_text_search_config: pg_catalog.english
+    max_connections: 200
 ```
 
 ### Existing database
@@ -43,32 +50,23 @@ externalDatabase:
   jdbcUrl: ""
 ```
 
-### Upgrading from the Bitnami PostgreSQL chart
+## Upgrading from 1.x
 
-Earlier versions of this chart bundled the Bitnami PostgreSQL subchart. The built in database
-uses the same names (`jasper-db` StatefulSet, Service and Secret, and the `data-jasper-db-0` PVC)
-and the same StatefulSet selector, so a normal `helm upgrade` reuses the existing volume and password.
+Version 2.0.0 replaces the Bitnami PostgreSQL subchart with the official `postgres` image.
+Data from 1.x cannot be reused in place, so migrate it with a dump and restore:
 
-The `bitnamilegacy/postgresql` image used previously runs PostgreSQL 17. On startup the
-`upgrade-dump` init container (using `postgresql.upgrade.image`, `postgres:17` by default) dumps
-the existing database, and the `upgrade-restore` init container restores it into a new
-PostgreSQL 18 data directory. The old data directory and the dump are kept on the volume
-under `/pgdata/upgrade` and can be deleted once the upgrade has been verified. The volume needs
-enough free space for the dump and a second copy of the database.
+1. Back up the database from the old pod:
+   ```sh
+   kubectl exec jasper-db-0 -- bash -c 'PGPASSWORD="$(cat /opt/bitnami/postgresql/secrets/postgres-password)" pg_dumpall -U postgres' > dump.sql
+   ```
+2. Install chart 2.0.0 as a fresh install, a new release, or in a new cluster.
+3. Restore the dump into the new database (the pod is named `<fullname>-postgresql-0`):
+   ```sh
+   kubectl exec -i jasper-postgresql-0 -- psql -U postgres < dump.sql
+   ```
+   Errors that `role "postgres"` and `database "jasper"` already exist are expected and can be ignored.
 
-If the existing data is from a different major version, set `postgresql.upgrade.image.tag` to
-match it. You can check the version with:
+### Major PostgreSQL upgrades
 
-```sh
-kubectl exec jasper-db-0 -- cat /bitnami/postgresql/data/PG_VERSION
-```
-
-If you had customized the Bitnami persistence settings (`postgresql.primary.persistence.*`),
-keep the same values so the StatefulSet volume claim template is unchanged.
-
-### Major version upgrades
-
-The same mechanism is used for future major version upgrades: set `postgresql.upgrade.image`
-to the current major version and `postgresql.image` to the new one. When the data directory
-already matches `postgresql.image` the init containers do nothing, so `postgresql.upgrade.enabled`
-can be left on, or set to `false` to skip them.
+Future major PostgreSQL version upgrades (for example 18 to 19) use the same steps:
+`pg_dumpall` from the old database, start a new database with the new image, and restore with `psql`.

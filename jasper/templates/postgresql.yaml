@@ -27,14 +27,6 @@ data:
 ---
 {{- end }}
 apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: {{ $fullname }}
-  labels:
-    {{- include "jasper.postgresql.labels" . | nindent 4 }}
-automountServiceAccountToken: false
----
-apiVersion: v1
 kind: Service
 metadata:
   name: {{ $fullname }}-hl
@@ -75,69 +67,41 @@ metadata:
 spec:
   replicas: 1
   serviceName: {{ $fullname }}-hl
-  updateStrategy:
-    type: RollingUpdate
   selector:
     matchLabels:
       {{- include "jasper.postgresql.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with $pg.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "jasper.postgresql.labels" . | nindent 8 }}
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/postgresql-config.yaml") . | sha256sum }}
-        {{- with $pg.primary.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
     spec:
-      serviceAccountName: {{ $fullname }}
       automountServiceAccountToken: false
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with $pg.podSecurityContext }}
       securityContext:
-        {{- toYaml $pg.primary.podSecurityContext | nindent 8 }}
-      {{- if $pg.upgrade.enabled }}
-      initContainers:
-        - name: upgrade-dump
-          image: "{{ $pg.upgrade.image.repository }}:{{ $pg.upgrade.image.tag }}"
-          imagePullPolicy: {{ $pg.upgrade.image.pullPolicy }}
-          securityContext:
-            {{- toYaml $pg.primary.containerSecurityContext | nindent 12 }}
-          command: ["bash", "/etc/postgresql/upgrade-dump.sh"]
-          env:
-            - name: PGDATA
-              value: /pgdata/data
-          resources:
-            {{- toYaml $pg.primary.resources | nindent 12 }}
-          volumeMounts:
-            {{- include "jasper.postgresql.volumeMounts" . | nindent 12 }}
-        - name: upgrade-restore
-          image: "{{ $pg.image.repository }}:{{ $pg.image.tag }}"
-          imagePullPolicy: {{ $pg.image.pullPolicy }}
-          securityContext:
-            {{- toYaml $pg.primary.containerSecurityContext | nindent 12 }}
-          command: ["bash", "/etc/postgresql/upgrade-restore.sh"]
-          env:
-            {{- include "jasper.postgresql.env" . | nindent 12 }}
-          resources:
-            {{- toYaml $pg.primary.resources | nindent 12 }}
-          volumeMounts:
-            {{- include "jasper.postgresql.volumeMounts" . | nindent 12 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: postgresql
           image: "{{ $pg.image.repository }}:{{ $pg.image.tag }}"
           imagePullPolicy: {{ $pg.image.pullPolicy }}
+          {{- with $pg.securityContext }}
           securityContext:
-            {{- toYaml $pg.primary.containerSecurityContext | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           args:
             - postgres
+            {{- range $key, $value := $pg.config }}
             - -c
-            - config_file=/etc/postgresql/postgresql.conf
-            - -c
-            - hba_file=/etc/postgresql/pg_hba.conf
+            - {{ printf "%s=%v" $key $value | quote }}
+            {{- end }}
           env:
             {{- include "jasper.postgresql.env" . | nindent 12 }}
           ports:
@@ -158,40 +122,38 @@ spec:
             exec:
               command: ["pg_isready", "-U", "postgres", "-d", "dbname={{ $pg.auth.database }}", "-h", "127.0.0.1", "-p", "5432"]
           resources:
-            {{- toYaml $pg.primary.resources | nindent 12 }}
+            {{- toYaml $pg.resources | nindent 12 }}
           volumeMounts:
-            {{- include "jasper.postgresql.volumeMounts" . | nindent 12 }}
-      {{- with $pg.primary.nodeSelector }}
+            - name: data
+              mountPath: /var/lib/postgresql
+            - name: dshm
+              mountPath: /dev/shm
+      {{- with $pg.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $pg.primary.affinity }}
+      {{- with $pg.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $pg.primary.tolerations }}
+      {{- with $pg.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: config
-          configMap:
-            name: {{ $fullname }}-config
-        - name: empty-dir
-          emptyDir: {}
         - name: dshm
           emptyDir:
             medium: Memory
-        {{- if not $pg.primary.persistence.enabled }}
+        {{- if not $pg.persistence.enabled }}
         - name: data
           emptyDir: {}
-        {{- else if $pg.primary.persistence.existingClaim }}
+        {{- else if $pg.persistence.existingClaim }}
         - name: data
           persistentVolumeClaim:
-            claimName: {{ $pg.primary.persistence.existingClaim }}
+            claimName: {{ $pg.persistence.existingClaim }}
         {{- end }}
-  {{- if and $pg.primary.persistence.enabled (not $pg.primary.persistence.existingClaim) }}
-  {{- with $pg.primary.persistence }}
+  {{- if and $pg.persistence.enabled (not $pg.persistence.existingClaim) }}
+  {{- with $pg.persistence }}
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim

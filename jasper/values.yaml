@@ -53,9 +53,8 @@ smtp:
 ## Set postgresql.enabled=false and configure externalDatabase to use an existing database.
 postgresql:
   enabled: true
-  # Name of the StatefulSet, Service and Secret. Defaults to "<fullname>-db".
-  # Kept as jasper-db for compatibility with the previously bundled Bitnami chart.
-  fullnameOverride: jasper-db
+  # Name of the StatefulSet, Service and Secret. Defaults to "<fullname>-postgresql".
+  fullnameOverride: ""
   image:
     # Use postgis/postgis (with a tag such as "18-3.6") for PostGIS support
     repository: postgres
@@ -72,57 +71,28 @@ postgresql:
       adminPasswordKey: postgres-password
   # Extra arguments for initdb when the database is first created
   initdbArgs: ""
-  ## Major version upgrades.
-  ## When the existing data directory was created by an older major version of PostgreSQL
-  ## (for example the PostgreSQL 17 data created by the previous Bitnami chart),
-  ## it is dumped using this image and restored into a new data directory using postgresql.image.
-  ## The old data directory and dump are kept on the volume under /pgdata/upgrade.
-  ## This image must be the same major version as the existing data (and include PostGIS if used).
-  upgrade:
+  # PostgreSQL settings passed to the server as "-c key=value" arguments
+  config:
+    default_text_search_config: pg_catalog.english
+  persistence:
     enabled: true
-    image:
-      repository: postgres
-      tag: "17"
-      pullPolicy: IfNotPresent
-  primary:
-    # Appended to postgresql.conf
-    extendedConfiguration: |-
-      default_text_search_config = 'pg_catalog.english'
-    # Replaces pg_hba.conf
-    pgHbaConfiguration: |-
-      local all all trust
-      host all all all scram-sha-256
-    persistence:
-      enabled: true
-      # Use an existing PVC instead of creating one
-      existingClaim: ""
-      # storageClass: "-"
-      storageClass: ""
-      accessModes:
-        - ReadWriteOnce
-      size: 8Gi
-      annotations: {}
-      labels: {}
-      selector: {}
-    podAnnotations: {}
-    podSecurityContext:
-      fsGroup: 1001
-      fsGroupChangePolicy: OnRootMismatch
-      seccompProfile:
-        type: RuntimeDefault
-    containerSecurityContext:
-      runAsUser: 1001
-      runAsGroup: 1001
-      runAsNonRoot: true
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop:
-          - ALL
-    resources: {}
-    nodeSelector: {}
-    tolerations: []
-    affinity: {}
+    # Use an existing PVC instead of creating one
+    existingClaim: ""
+    # storageClass: "-"
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
+    annotations: {}
+    labels: {}
+    selector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 ## Existing database to use when postgresql.enabled=false
 externalDatabase:
